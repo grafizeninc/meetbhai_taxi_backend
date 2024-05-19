@@ -2,7 +2,7 @@
 
 This provides details on the authentication endpoints for the application, specifically the `login` and `signup` functionalities.
 
-**Base URL:** `........`
+**Base URL:** `https://meetbhai-taxi-backend.onrender.com/api`
 
 ## Endpoints
 
