@@ -8,7 +8,7 @@ This provides details on the authentication endpoints for the application, speci
 
 ### 1. Login
 
-**URL:** `/login`
+**URL:** `/auth/login`
 
 **Method:** `POST`
 
@@ -64,7 +64,7 @@ This provides details on the authentication endpoints for the application, speci
 
 ### 2. Signup
 
-**URL:** `/signup`
+**URL:** `/auth/signup`
 
 **Method:** `POST`
 
@@ -109,7 +109,7 @@ This provides details on the authentication endpoints for the application, speci
 
 ### 1. Login
 
-**URL:** `/admin/login`
+**URL:** `/auth/admin/login`
 
 **Method:** `POST`
 
@@ -169,7 +169,7 @@ This provides details on the authentication endpoints for the application, speci
 
 ### 1. Fetch All
 
-**URL:** `/airports`
+**URL:** `/api/v1/airports`
 
 **Method:** `GET`
 
@@ -181,5 +181,11 @@ This provides details on the authentication endpoints for the application, speci
     - **Status:** 200 OK
     - **Body:**
       ```json
-      {"status":"success","results":3,"data":{"data":[{"_id":"664b5223fe8bad3448a95236","name":"Murtala Muhammed International Airport","code":"LOS","cityName":"Ikeja","dateLogs":"2024-05-20T13:36:36.945Z","__v":0},{"_id":"664b52c0540ecf34e8156887","name":"Nnamdi Azikiwe International Airport","code":"ABV","cityName":"Abuja","dateLogs":"2024-05-20T13:37:36.945Z","__v":0},{"_id":"664b52e9540ecf34e8156888","name":"Port Harcourt International Airport","code":"PHC","cityName":"PortHarcourt","dateLogs":"2024-05-20T12:37:36.945Z","__v":0}]}}
+      {
+      "status":"success",
+      "results":3,
+      "data":
+      {"data":
+      [{"_id":"664b5223fe8bad3448a95236","name":"Murtala Muhammed International Airport","code":"LOS","cityName":"Ikeja","dateLogs":"2024-05-20T13:36:36.945Z","__v":0},{"_id":"664b52c0540ecf34e8156887","name":"Nnamdi Azikiwe International Airport","code":"ABV","cityName":"Abuja","dateLogs":"2024-05-20T13:37:36.945Z","__v":0},{"_id":"664b52e9540ecf34e8156888","name":"Port Harcourt International Airport","code":"PHC","cityName":"PortHarcourt","dateLogs":"2024-05-20T12:37:36.945Z","__v":0}]}
+      }
       ```
