@@ -7,6 +7,10 @@ const authController = require('./../controllers/authController');
 router.post('/login', authController.login);
 router.post('/signup', authController.signup);
 
+
+router.post('/admin/login', authController.adminLogin);
+router.post('/admin/signup', authController.adminSignup);
+
 // Protect all routes after this middleware
 router.use(authController.protect);
 

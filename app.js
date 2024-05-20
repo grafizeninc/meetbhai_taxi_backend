@@ -8,6 +8,7 @@ const cors = require('cors');
 
 
 const userRoutes = require('./routes/userRoutes');
+const airportRoutes = require('./routes/airportRoutes');
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const app = express();
@@ -33,7 +34,8 @@ app.use(xss());
 app.use(hpp());
 
 
-app.use('/api/v1', userRoutes);
+app.use('/auth', userRoutes);
+app.use('/api/v1', airportRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');

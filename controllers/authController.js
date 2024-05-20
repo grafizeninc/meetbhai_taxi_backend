@@ -1,6 +1,7 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Admin = require("../models/adminModel");
 const AppError = require("../utils/appError");
 
 const createToken = id => {
@@ -15,6 +16,79 @@ const createToken = id => {
   );
 };
 
+/*
+  Admin Authentication
+*/
+exports.adminLogin = async (req, res, next) => {
+  try { 
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(
+        new AppError(404, "fail", "Please provide email or password"),
+        req,
+        res,
+        next,
+      );
+    }
+
+    const admin = await Admin.findOne({
+      email,
+    }).select("+password");
+
+    if (!admin || !(await admin.correctPassword(password, admin.password))) {
+      return next(
+        new AppError(401, "fail", "Email or Password is wrong"),
+        req,
+        res,
+        next,
+      );
+    }
+
+    const token = createToken(admin.id);
+
+    admin.password = undefined;
+
+    res.status(200).json({
+      status: "success",
+      token,
+      data: {
+        admin,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+exports.adminSignup = async (req, res, next) => {
+  try {
+    const admin = await Admin.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      phoneNumber: req.body.phoneNumber,
+    });
+
+    const token = createToken(admin.id);
+
+    admin.password = undefined;
+
+    res.status(201).json({
+      status: "success",
+      token,
+      data: {
+        admin,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/*
+  User Authentication
+*/
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
