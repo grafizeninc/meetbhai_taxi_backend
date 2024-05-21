@@ -4,6 +4,7 @@ const Airport = require("../models/airportModel");
 exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
 exports.update = base.updateOne(Airport);
+exports.delete = base.deleteOne(Airport);
 exports.add = async (req, res, next) => {
     try {
         const airport = await Airport.create({
