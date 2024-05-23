@@ -45,7 +45,7 @@ exports.addDestination = async (req, res, next) => {
     const destination = await Destination.create({
       name: req.body.name,
       tags: tagsData,
-      airport: req.body.airport,
+      airportId: req.body.airport,
       hatchBack: req.body.hatchBack,
       suv: req.body.suv,
       sedan: req.body.sedan,
