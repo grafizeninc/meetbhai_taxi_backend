@@ -42,6 +42,7 @@ exports.addDestination = async (req, res, next) => {
     }
     let tags = req.body.tags;
     let tagsData = tags ? tags.split(",") : [""];
+    await req.body;
     const destination = await Destination.create({
       name: req.body.name,
       tags: tagsData,
