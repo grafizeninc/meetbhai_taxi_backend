@@ -11,6 +11,13 @@ router.use(authController.protect);
 router.get('/airports', airportController.getAll);
 router.get('/airport/:id', airportController.getOne);
 
+// Destination Routes
+router.get('/destination', airportController.getDestination);
+router.post('/destination', airportController.addDestination);
+router.get('/destination/:airport', airportController.getDestinationByAirport);
+router.post('/destination/edit/:id', airportController.updateDestination);
+router.post('/destination/tags/:id', airportController.updateDestinationTags);
+
 
 // Only admin have permission to access for the below APIs 
 router.use(authController.restrictTo('admin'));
