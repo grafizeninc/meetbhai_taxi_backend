@@ -7,6 +7,11 @@ const destinationSchema = new mongoose.Schema({
     ref: "Airport",
     required: [true, "Please fill Destination Airport"],
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 
 });
 
