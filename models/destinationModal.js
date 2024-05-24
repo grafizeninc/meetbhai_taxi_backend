@@ -5,11 +5,11 @@ const destinationSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please fill Destination LandMark Name"],
       },
-  airportId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
-    required: [true, "Please fill Destination Airport"],
-  },
+//   airportId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Airport",
+//     required: [false, "Please fill Destination Airport"],
+//   },
   active: {
     type: Boolean,
     default: true,
