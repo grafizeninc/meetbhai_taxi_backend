@@ -34,7 +34,6 @@ exports.addDestination = async (req, res, next) => {
   try {
     const destination = await Destination.create({
       name: req.body.name,
-      // airportId: req.body.airport,
     });
 
     res.status(201).json({
