@@ -49,11 +49,6 @@ exports.addDestination = async (req, res, next) => {
       name: req.body.name,
       tags: tagsData,
       airportId: req.body.airport,
-      hatchBack: req.body.hatchBack,
-      suv: req.body.suv,
-      sedan: req.body.sedan,
-      innova: req.body.innova,
-      tempo: req.body.tempo,
     });
 
     res.status(201).json({
