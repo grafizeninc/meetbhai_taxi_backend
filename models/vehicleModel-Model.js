@@ -6,7 +6,7 @@ const vehicleModelSchema = new mongoose.Schema({
     ref: "Vehicle",
     required: [true, "Please fill Vehicle Category"],
   },
-  modelName: {
+  name: {
     type: String,
     required: [true, "Please fill Vehicle Model Name"],
   },

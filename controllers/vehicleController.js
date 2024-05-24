@@ -10,7 +10,7 @@ exports.addModel = async (req, res, next) => {
   try {
     const vehicleModel = await VehicleModel.create({
       category: req.body.category,
-      modelName: req.body.modelName,
+      name: req.body.name,
       seatSegment: req.body.seatSegment,
       fuelType: req.body.fuelType,
       luggage: req.body.luggage,
