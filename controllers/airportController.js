@@ -1,6 +1,8 @@
 const base = require("./baseController");
 const Airport = require("../models/airportModel");
 const Destination = require("../models/destinationModel");
+const DestinationVehicle = require("../models/destinationVehicleModel");
+const Vehicle = require("../models/vehicleModel");
 const AppError = require("../utils/appError");
 
 exports.getAll = base.getAll(Airport);
@@ -139,6 +141,50 @@ exports.getDestination = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       destination: airportDestinationCount,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+// Destination Vehicles
+
+exports.getAll = base.getAll(DestinationVehicle);
+exports.getOne = base.getOne(DestinationVehicle);
+exports.update = base.updateOne(DestinationVehicle);
+exports.delete = base.deleteOne(DestinationVehicle);
+exports.getvehicleByDestination = async (req, res, next) => {
+  try {
+    const destination = await DestinationVehicle.find({
+      destinationId: req.params.destination,
+    });
+    for (const d of destination) {
+      if (d.destinationId) {
+        await d.populate("destinationId").execPopulate();
+      }
+    }
+    res.status(200).json({
+      status: "success",
+      destination,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.addDestinationVehicle = async (req, res, next) => {
+  try {
+    const destinationVehicle = await DestinationVehicle.create({
+      destinationId: req.body.destinationId,
+      vehicleId: req.body.vehicleId,
+      price: req.body.price,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        destinationVehicle,
+      },
     });
   } catch (err) {
     next(err);

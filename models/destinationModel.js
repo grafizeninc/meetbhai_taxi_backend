@@ -14,26 +14,6 @@ const destinationSchema = new mongoose.Schema({
     type: Array,
     default: [""],
   },
-  hatchBack: {
-    type: String,
-    default: "",
-  },
-  sedan: {
-    type: String,
-    default: "",
-  },
-  suv: {
-    type: String,
-    default: "",
-  },
-  innova: {
-    type: String,
-    default: "",
-  },
-  tempo: {
-    type: String,
-    default: "",
-  },
   active: {
     type: Boolean,
     default: true,

@@ -18,6 +18,12 @@ router.get('/destination/:airport', airportController.getDestinationByAirport);
 router.post('/destination/edit/:id', airportController.updateDestination);
 router.post('/destination/tags/:id', airportController.updateDestinationTags);
 
+// Destination Vehicle
+router.get('/destination-vehicle/:destination', airportController.getvehicleByDestination);
+router.post('/destination-vehicle', airportController.addDestinationVehicle);
+router.post('/destination-vehicle/edit/:id', airportController.updateDestination);
+
+
 
 // Only admin have permission to access for the below APIs 
 router.use(authController.restrictTo('admin'));
