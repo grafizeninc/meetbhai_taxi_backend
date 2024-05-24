@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const destinationLandMarkSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "Please fill Destination Name"],
+    required: [true, "Please fill Destination LandMark Name"],
   },
   airportId: {
     type: mongoose.Schema.Types.ObjectId,
