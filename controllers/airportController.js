@@ -40,6 +40,33 @@ exports.addDestination = async (req, res, next) => {
         next
       );
     }
+    await req.body;
+    const destination = await Destination.create({
+      airportId: req.body.airport,
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: {
+        destination,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.addLandMark = async (req, res, next) => {
+  try {
+    const airport = await Airport.findById(req.body.airport);
+    if (!airport) {
+      return next(
+        new AppError(401, "fail", "No Airport found with that id"),
+        req,
+        res,
+        next
+      );
+    }
     let tags = req.body.tags;
     let tagsData = tags ? tags.split(",") : [""];
     await req.body;
