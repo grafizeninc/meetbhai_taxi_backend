@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const destinationSchema = new mongoose.Schema({
+const destinationLandMarkSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please fill Destination Name"],
@@ -41,5 +41,5 @@ const destinationSchema = new mongoose.Schema({
   },
 });
 
-const Destination = mongoose.model("Destination", destinationSchema);
-module.exports = Destination;
+const DestinationLandMark = mongoose.model("DestinationLandMark", destinationLandMarkSchema);
+module.exports = DestinationLandMark;

@@ -1,7 +1,8 @@
 const base = require("./baseController");
 const Airport = require("../models/airportModel");
-const Destination = require("../models/destinationModel");
+const DestinationLandMark = require("../models/destinationLandMarkModel");
 const AppError = require("../utils/appError");
+const Destination = require("../models/destinationModal");
 
 exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
@@ -70,7 +71,7 @@ exports.addLandMark = async (req, res, next) => {
     let tags = req.body.tags;
     let tagsData = tags ? tags.split(",") : [""];
     await req.body;
-    const destination = await Destination.create({
+    const destinationLandMark = await DestinationLandMark.create({
       name: req.body.name,
       tags: tagsData,
       airportId: req.body.airport,
@@ -84,7 +85,7 @@ exports.addLandMark = async (req, res, next) => {
     res.status(201).json({
       status: "success",
       data: {
-        destination,
+        destinationLandMark,
       },
     });
   } catch (err) {
@@ -130,17 +131,17 @@ exports.updateDestinationTags = async (req, res, next) => {
 
 exports.getDestinationByAirport = async (req, res, next) => {
   try {
-    const destination = await Destination.find({
+    const destinationLandMark = await DestinationLandMark.find({
       airportId: req.params.airport,
     });
-    for (const d of destination) {
+    for (const d of destinationLandMark) {
       if (d.airportId) {
         await d.populate("airportId").execPopulate();
       }
     }
     res.status(200).json({
       status: "success",
-      destination,
+      destinationLandMark,
     });
   } catch (err) {
     next(err);
