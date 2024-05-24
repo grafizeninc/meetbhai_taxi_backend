@@ -10,6 +10,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes');
 const airportRoutes = require('./routes/airportRoutes');
 const tripRoutes = require('./routes/tripRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
 const stateAndCityRoutes = require('./routes/stateAndCityRoutes');
 const localPackageRoutes = require('./routes/localPackageRoutes');
 
@@ -41,6 +42,7 @@ app.use(hpp());
 app.use('/auth', userRoutes);
 app.use('/api/v1', airportRoutes);
 app.use('/api/v1', tripRoutes);
+app.use('/api/v1', vehicleRoutes);
 app.use('/api/v1', localPackageRoutes);
 app.use('/api/v1', stateAndCityRoutes);
 
