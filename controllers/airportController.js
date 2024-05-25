@@ -145,10 +145,10 @@ exports.getDestination = async (req, res, next) => {
 
 // Destination Vehicles
 
-exports.getAll = base.getAll(DestinationVehicle);
-exports.getOne = base.getOne(DestinationVehicle);
-exports.update = base.updateOne(DestinationVehicle);
-exports.delete = base.deleteOne(DestinationVehicle);
+exports.getAllDestinationVehicle = base.getAll(DestinationVehicle);
+exports.getOneDestinationVehicle = base.getOne(DestinationVehicle);
+exports.updateDestinationVehicle = base.updateOne(DestinationVehicle);
+exports.deleteDestinationVehicle = base.deleteOne(DestinationVehicle);
 exports.getvehicleByDestination = async (req, res, next) => {
   try {
     const destination = await DestinationVehicle.find({
