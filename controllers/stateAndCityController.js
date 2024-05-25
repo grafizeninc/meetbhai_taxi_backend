@@ -11,7 +11,7 @@ exports.addState = async (req, res, next) => {
     const state = await State.create({
       name: req.body.name,
       code: req.body.code,
-      addDate: new Date(),
+      addedDate: new Date(),
     });
 
     res.status(201).json({
@@ -43,7 +43,7 @@ exports.addCity = async (req, res, next) => {
     const city = await City.create({
       name: req.body.name,
       code: req.body.code,
-      addDate: new Date(),
+      addedDate: new Date(),
       state_id: req.body.state,
       state_name: state.name,
     });

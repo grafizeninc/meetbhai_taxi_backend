@@ -34,6 +34,14 @@ const vehicleModelSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill Carrier Field"],
   },
+  addedDate: {
+    type: Date,
+    required: false
+  },
+  updatedDate: {
+    type: Date,
+    required: false
+  },
   active: {
     type: Boolean,
     default: true,

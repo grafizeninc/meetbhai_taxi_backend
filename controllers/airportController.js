@@ -15,7 +15,7 @@ exports.add = async (req, res, next) => {
       name: req.body.name,
       code: req.body.code,
       cityName: req.body.cityName,
-      dateLogs: req.body.dateLogs,
+      addedDate: new Date(),
     });
 
     res.status(201).json({
@@ -49,6 +49,7 @@ exports.addDestination = async (req, res, next) => {
       name: req.body.name,
       tags: tagsData,
       airportId: req.body.airport,
+      addedDate: new Date(),
     });
 
     res.status(201).json({
@@ -173,6 +174,7 @@ exports.addDestinationVehicle = async (req, res, next) => {
       destinationId: req.body.destinationId,
       vehicleId: req.body.vehicleId,
       price: req.body.price,
+      addedDate: new Date(),
     });
 
     res.status(201).json({

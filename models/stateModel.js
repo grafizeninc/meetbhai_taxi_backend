@@ -10,9 +10,13 @@ const stateSchema = new mongoose.Schema({
     required: [true, "Please fill State Short Code"],
     unique: true,
   },
-  addDate: {
+  addedDate: {
     type: Date,
-    required: [true, "Please fill Date"],
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false
   },
   active: {
     type: Boolean,

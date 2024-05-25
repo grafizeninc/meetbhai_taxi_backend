@@ -14,6 +14,14 @@ const destinationSchema = new mongoose.Schema({
     type: Array,
     default: [""],
   },
+  addedDate: {
+    type: Date,
+    required: false
+  },
+  updatedDate: {
+    type: Date,
+    required: false
+  },
   active: {
     type: Boolean,
     default: true,

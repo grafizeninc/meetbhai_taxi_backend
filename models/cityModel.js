@@ -19,9 +19,13 @@ const citySchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill State name"],
   },
-  addDate: {
+  addedDate: {
     type: Date,
     required: [true, "Please fill City Date Log"],
+  },
+  updatedDate: {
+    type: Date,
+    required: false
   },
   active: {
     type: Boolean,

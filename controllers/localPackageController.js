@@ -16,6 +16,7 @@ exports.add = async (req, res, next) => {
             sedan: req.body.sedan,
             innovaCrysta: req.body.innovaCrysta,
             tempoTr: req.body.tempoTr,
+            addedDate: new Date(),
         });
         
           res.status(201).json({

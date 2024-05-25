@@ -14,9 +14,13 @@ const airportSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill Airport City"],
   },
-  dateLogs: {
-    type: String,
-    required: [true, "Please fill Airport Date Log"]
+  addedDate: {
+    type: Date,
+    required: false
+  },
+  updatedDate: {
+    type: Date,
+    required: false
   },
   active: {
     type: Boolean,

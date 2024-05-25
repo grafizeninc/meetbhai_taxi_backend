@@ -10,6 +10,14 @@ const vehicleSchema = new mongoose.Schema({
     required: [true, "Please fill Vehicle Priority"],
     unique: true,
   },
+  addedDate: {
+    type: Date,
+    required: false
+  },
+  updatedDate: {
+    type: Date,
+    required: false
+  },
   active: {
     type: Boolean,
     default: true,
