@@ -157,7 +157,7 @@ exports.getvehicleByDestination = async (req, res, next) => {
     });
     for (const d of destination) {
       if (d.destinationId) {
-        await d.populate("destinationId").execPopulate();
+        await d.populate("vehicleId").execPopulate();
       }
     }
     res.status(200).json({
