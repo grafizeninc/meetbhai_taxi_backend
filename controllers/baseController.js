@@ -78,11 +78,7 @@ exports.getOne = Model => async (req, res, next) => {
 
 exports.getAll = Model => async (req, res, next) => {
     try {
-        const features = new APIFeatures(Model.find(), req.query)
-            .sort()
-            .paginate();
-
-        const doc = await features.query;
+        const doc = await Model.find();
 
         res.status(200).json({
             status: 'success',
