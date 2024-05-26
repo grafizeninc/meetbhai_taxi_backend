@@ -2,7 +2,7 @@ const base = require("./baseController");
 const Airport = require("../models/airportModel");
 const Destination = require("../models/destinationModel");
 const DestinationVehicle = require("../models/destinationVehicleModel");
-const Vehicle = require("../models/vehicleModel");
+const VehicleModel = require("../models/vehicleModel-Model");
 const AppError = require("../utils/appError");
 
 exports.getAll = base.getAll(Airport);
@@ -160,9 +160,26 @@ exports.getvehicleByDestination = async (req, res, next) => {
         await d.populate("vehicleId").execPopulate();
       }
     }
+    const finalData = destination.map((item, id) => ({
+      vehicleId: item.vehicleId._id.toString(),
+      price: item.price,
+      categoryName: item.vehicleId.categoryName,
+    }));
+
+    const vehicles = await VehicleModel.find({
+      category: { $in: finalData.map(item => item.vehicleId) },
+    });
+
+    const data = vehicles.flatMap(vehicle => {
+      const matchingData = finalData.filter(item => item.vehicleId === vehicle.category.toString());
+      return matchingData.map(item => ({
+        ...item,
+        ...vehicle.toObject(),
+      }));
+    });
     res.status(200).json({
       status: "success",
-      destination,
+      data,
     });
   } catch (err) {
     next(err);
