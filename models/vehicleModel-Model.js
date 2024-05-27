@@ -36,16 +36,15 @@ const vehicleModelSchema = new mongoose.Schema({
   },
   addedDate: {
     type: Date,
-    required: false
+    required: false,
   },
   updatedDate: {
     type: Date,
-    required: false
+    required: false,
   },
   active: {
     type: Boolean,
     default: true,
-    select: false,
   },
 });
 

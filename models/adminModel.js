@@ -22,13 +22,12 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill your password"],
     minLength: 6,
-    select: false,
   },
   passwordConfirm: {
     type: String,
     required: [true, "Please fill your password confirm"],
     validate: {
-      validator: function(el) {
+      validator: function (el) {
         return el === this.password;
       },
       message: "Your password and confirmation password are not the same",
@@ -46,11 +45,10 @@ const adminSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
-    select: false,
   },
 });
 
-adminSchema.pre("save", async function(next) {
+adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     return next();
   }
@@ -61,9 +59,9 @@ adminSchema.pre("save", async function(next) {
   next();
 });
 
-adminSchema.methods.correctPassword = async function(
+adminSchema.methods.correctPassword = async function (
   typedPassword,
-  originalPassword,
+  originalPassword
 ) {
   return await bcrypt.compare(typedPassword, originalPassword);
 };

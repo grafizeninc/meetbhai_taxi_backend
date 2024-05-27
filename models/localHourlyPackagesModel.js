@@ -36,9 +36,11 @@ const localHourlyPackagesSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     default: true,
-    select: false,
   },
 });
 
-const LocalHourlyPackages = mongoose.model("LocalHourlyPackages", localHourlyPackagesSchema);
+const LocalHourlyPackages = mongoose.model(
+  "LocalHourlyPackages",
+  localHourlyPackagesSchema
+);
 module.exports = LocalHourlyPackages;
