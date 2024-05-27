@@ -5,7 +5,7 @@ exports.getAll = base.getAll(Coupon);
 exports.getOne = base.getOne(Coupon);
 exports.update = base.updateOne(Coupon);
 exports.delete = base.deleteOne(Coupon);
-exports.addCoupon = async (req, res, next) => {
+exports.add = async (req, res, next) => {
   try {
     const coupon = await Coupon.create({
       name: req.body.name,
