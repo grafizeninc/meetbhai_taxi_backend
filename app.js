@@ -13,6 +13,7 @@ const tripRoutes = require('./routes/tripRoutes');
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const stateAndCityRoutes = require('./routes/stateAndCityRoutes');
 const localPackageRoutes = require('./routes/localPackageRoutes');
+const couponRoutes = require('./routes/couponRoutes');
 
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -45,6 +46,7 @@ app.use('/api/v1', tripRoutes);
 app.use('/api/v1', vehicleRoutes);
 app.use('/api/v1', localPackageRoutes);
 app.use('/api/v1', stateAndCityRoutes);
+app.use('/api/v1', couponRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');
