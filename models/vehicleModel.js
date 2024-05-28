@@ -1,14 +1,38 @@
 const mongoose = require("mongoose");
 
-const vehicleSchema = new mongoose.Schema({
-  categoryName: {
-    type: String,
-    required: [true, "Please fill Vehicle Category Name"],
+const vehicleModelSchema = new mongoose.Schema({
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vehicle",
+    required: [true, "Please fill Vehicle Category"],
   },
-  priority: {
+  name: {
     type: String,
-    required: [true, "Please fill Vehicle Priority"],
-    unique: true,
+    required: [true, "Please fill Vehicle Model Name"],
+  },
+  seatSegment: {
+    type: String,
+    required: [true, "Please fill Vehicle Seat Segment"],
+  },
+  fuelType: {
+    type: String,
+    required: [true, "Please fill Vehicle Fuel Type"],
+  },
+  luggage: {
+    type: String,
+    required: [true, "Please fill Luggage"],
+  },
+  ac: {
+    type: String,
+    required: [true, "Please fill AC/No AC"],
+  },
+  waterBottle: {
+    type: String,
+    required: [true, "Please fill Water Bottle Field"],
+  },
+  carrier: {
+    type: String,
+    required: [true, "Please fill Carrier Field"],
   },
   addedDate: {
     type: Date,
@@ -24,5 +48,5 @@ const vehicleSchema = new mongoose.Schema({
   },
 });
 
-const Vehicle = mongoose.model("Vehicle", vehicleSchema);
-module.exports = Vehicle;
+const VehicleModel = mongoose.model("VehicleModel", vehicleModelSchema);
+module.exports = VehicleModel;

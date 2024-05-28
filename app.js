@@ -7,15 +7,16 @@ const hpp = require('hpp');
 const cors = require('cors');
 
 
-const userRoutes = require('./routes/userRoutes');
-const airportRoutes = require('./routes/airportRoutes');
-const tripRoutes = require('./routes/tripRoutes');
-const vehicleRoutes = require('./routes/vehicleRoutes');
-const stateAndCityRoutes = require('./routes/stateAndCityRoutes');
-const localPackageRoutes = require('./routes/localPackageRoutes');
-const couponRoutes = require('./routes/couponRoutes');
+const userRoutes = require('./routes/user');
+const airportRoutes = require('./routes/airport');
+const tripRoutes = require('./routes/trip');
+const vehicleRoutes = require('./routes/vehicle');
+const stateAndCityRoutes = require('./routes/stateAndCity');
+const localPackageRoutes = require('./routes/localPackage');
+const couponRoutes = require('./routes/coupon');
+const bookingRoutes = require('./routes/booking');
 
-const globalErrHandler = require('./controllers/errorController');
+const globalErrHandler = require('./controllers/error');
 const AppError = require('./utils/appError');
 const app = express();
 app.use(cors());
@@ -47,6 +48,7 @@ app.use('/api/v1', vehicleRoutes);
 app.use('/api/v1', localPackageRoutes);
 app.use('/api/v1', stateAndCityRoutes);
 app.use('/api/v1', couponRoutes);
+app.use('/api/v1', bookingRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');

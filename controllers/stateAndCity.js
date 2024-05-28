@@ -1,6 +1,6 @@
-const base = require("./baseController");
-const State = require("../models/stateModel");
-const City = require("../models/cityModel");
+const base = require("./base");
+const State = require("../models/state");
+const City = require("../models/city");
 
 exports.getAllState = base.getAll(State);
 exports.getOneState = base.getOne(State);

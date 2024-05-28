@@ -1,6 +1,6 @@
-const base = require("./baseController");
-const Vehicle = require("../models/vehicleModel");
-const VehicleModel = require("../models/vehicleModel-Model");
+const base = require("./base");
+const Vehicle = require("../models/vehicle");
+const VehicleModel = require("../models/vehicleModel");
 
 exports.getModelAll = base.getAll(VehicleModel);
 exports.getModelOne = base.getOne(VehicleModel);

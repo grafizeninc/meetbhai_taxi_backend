@@ -1,8 +1,8 @@
-const base = require("./baseController");
-const Airport = require("../models/airportModel");
-const Destination = require("../models/destinationModel");
-const DestinationVehicle = require("../models/destinationVehicleModel");
-const VehicleModel = require("../models/vehicleModel-Model");
+const base = require("./base");
+const Airport = require("../models/airport");
+const Destination = require("../models/destination");
+const DestinationVehicle = require("../models/destinationVehicle");
+const VehicleModel = require("../models/vehicleModel");
 const AppError = require("../utils/appError");
 
 exports.getAll = base.getAll(Airport);
@@ -143,7 +143,6 @@ exports.getDestination = async (req, res, next) => {
   }
 };
 
-
 // Destination Vehicles
 
 exports.getAllDestinationVehicle = base.getAll(DestinationVehicle);
@@ -167,12 +166,14 @@ exports.getvehicleByDestination = async (req, res, next) => {
     }));
 
     const vehicles = await VehicleModel.find({
-      category: { $in: finalData.map(item => item.vehicleId) },
+      category: { $in: finalData.map((item) => item.vehicleId) },
     });
 
-    const data = vehicles.flatMap(vehicle => {
-      const matchingData = finalData.filter(item => item.vehicleId === vehicle.category.toString());
-      return matchingData.map(item => ({
+    const data = vehicles.flatMap((vehicle) => {
+      const matchingData = finalData.filter(
+        (item) => item.vehicleId === vehicle.category.toString()
+      );
+      return matchingData.map((item) => ({
         ...item,
         ...vehicle.toObject(),
       }));

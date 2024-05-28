@@ -11,7 +11,6 @@ process.on('uncaughtException', err => {
 });
 
 const app = require('./app');
-
 const database = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
 
 mongoose.connect(database, {
@@ -21,6 +20,8 @@ mongoose.connect(database, {
     useUnifiedTopology: true
 }).then(con => {
     console.log('DB connection Successfully!');
+mongoose.model("Coupon").collection.dropIndexes();
+mongoose.model("Coupon").createIndexes();
 });
 
 const port = process.env.PORT;

@@ -1,10 +1,10 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
-const Admin = require("../models/adminModel");
+const User = require("../models/user");
+const Admin = require("../models/admin");
 const AppError = require("../utils/appError");
 
-const createToken = id => {
+const createToken = (id) => {
   return jwt.sign(
     {
       id,
@@ -12,7 +12,7 @@ const createToken = id => {
     process.env.JWT_SECRET,
     {
       expiresIn: process.env.JWT_EXPIRES_IN,
-    },
+    }
   );
 };
 
@@ -20,14 +20,14 @@ const createToken = id => {
   Admin Authentication
 */
 exports.adminLogin = async (req, res, next) => {
-  try { 
+  try {
     const { email, password } = req.body;
     if (!email || !password) {
       return next(
         new AppError(404, "fail", "Please provide email or password"),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -40,7 +40,7 @@ exports.adminLogin = async (req, res, next) => {
         new AppError(401, "fail", "Email or Password is wrong"),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -58,7 +58,7 @@ exports.adminLogin = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 exports.adminSignup = async (req, res, next) => {
   try {
@@ -97,7 +97,7 @@ exports.login = async (req, res, next) => {
         new AppError(404, "fail", "Please provide email or password"),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -110,7 +110,7 @@ exports.login = async (req, res, next) => {
         new AppError(401, "fail", "Email or Password is wrong"),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -170,11 +170,11 @@ exports.protect = async (req, res, next) => {
         new AppError(
           401,
           "fail",
-          "You are not logged in! Please login in to continue",
+          "You are not logged in! Please login in to continue"
         ),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -187,7 +187,7 @@ exports.protect = async (req, res, next) => {
         new AppError(401, "fail", "This user no longer exist"),
         req,
         res,
-        next,
+        next
       );
     }
 
@@ -196,7 +196,7 @@ exports.protect = async (req, res, next) => {
     } else {
       req.user = admin;
     }
-    
+
     next();
   } catch (err) {
     next(err);
@@ -210,7 +210,7 @@ exports.restrictTo = (...roles) => {
         new AppError(403, "fail", "You are not allowed to do this action"),
         req,
         res,
-        next,
+        next
       );
     }
     next();

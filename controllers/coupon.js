@@ -1,5 +1,5 @@
-const base = require("./baseController");
-const Coupon = require("../models/couponModel");
+const base = require("./base");
+const Coupon = require("../models/coupon");
 
 exports.getAll = base.getAll(Coupon);
 exports.getOne = base.getOne(Coupon);
