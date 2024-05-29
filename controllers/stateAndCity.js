@@ -1,6 +1,7 @@
 const base = require("./base");
 const State = require("../models/state");
 const City = require("../models/city");
+const AppError = require("../utils/appError");
 
 exports.getAllState = base.getAll(State);
 exports.getOneState = base.getOne(State);
