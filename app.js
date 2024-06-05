@@ -12,6 +12,7 @@ const airportRoutes = require('./routes/airportRoutes');
 const tripRoutes = require('./routes/tripRoutes');
 const stateAndCityRoutes = require('./routes/stateAndCityRoutes');
 const localPackageRoutes = require('./routes/localPackageRoutes');
+const outStationRoutes = require('./routes/outStationRoutes');
 
 const globalErrHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
@@ -39,10 +40,12 @@ app.use(hpp());
 
 
 app.use('/auth', userRoutes);
+app.use('/api/v1', userRoutes);
 app.use('/api/v1', airportRoutes);
 app.use('/api/v1', tripRoutes);
 app.use('/api/v1', localPackageRoutes);
 app.use('/api/v1', stateAndCityRoutes);
+app.use('/api/v1', outStationRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');

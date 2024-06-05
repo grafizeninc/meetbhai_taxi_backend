@@ -59,7 +59,7 @@ exports.addLandMark = async (req, res, next) => {
       );
     }
     let tags = req.body.tags;
-    let tagsData = tags ? tags.split(",") : [""];
+    let tagsData = tags ? tags : [];
     await req.body;
     const destinationLandMark = await DestinationLandMark.create({
       name: req.body.name,
@@ -84,14 +84,17 @@ exports.addLandMark = async (req, res, next) => {
 };
 
 exports.updateDestination = base.updateOne(Destination);
+exports.updateDestinationLandMark = base.updateOne(DestinationLandMark);
+exports.deleteDestinationLandMark = base.deleteOne(DestinationLandMark);
+
 exports.updateDestinationTags = async (req, res, next) => {
   try {
     let tags = req.body.tags;
-    let tagsData = tags ? tags.split(",") : [""];
-    const doc = await Model.findByIdAndUpdate(
+    // let tagsData = tags ? tags.split(",") : [""];
+    const doc = await DestinationLandMark.findByIdAndUpdate(
       req.params.id,
       {
-        tags: tagsData,
+        tags: tags,
       },
       {
         new: true,
