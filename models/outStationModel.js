@@ -6,26 +6,17 @@ const OutStationSchema = new mongoose.Schema({
     ref: "State",
     required: [true, "Please fill State"],
   },
-  hatchBackKm: {
-    type: String,
-    default: "",
-  },
-  sedanKm: {
-    type: String,
-    default: "",
-  },
-  suvKm: {
-    type: String,
-    default: "",
-  },
-  innovaKm: {
-    type: String,
-    default: "",
-  },
-  tempoKm: {
-    type: String,
-    default: "",
-  }
+  pricesPerKm: [{
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vehicle",
+      required: [true, "Please provide Vehicle category"],
+    },
+    price: {
+      type: Number,
+      required: [true, "Please provide price"],
+    }
+  }]
 });
 
 const OutStation = mongoose.model("OutStation", OutStationSchema);
