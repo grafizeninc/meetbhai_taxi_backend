@@ -15,6 +15,8 @@ router.get('/airport/:id', airportController.getOne);
 router.get('/destination', airportController.getDestination);
 router.post('/destination', airportController.addDestination);
 router.post('/destination-landmark', airportController.addLandMark);
+router.post('/destination-landmark/edit/:id', airportController.updateDestinationLandMark);
+router.delete('/destination-landmark/:id', airportController.deleteDestinationLandMark);
 router.get('/destination/:airport', airportController.getDestinationByAirport);
 router.post('/destination/edit/:id', airportController.updateDestination);
 router.post('/destination/tags/:id', airportController.updateDestinationTags);
