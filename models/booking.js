@@ -34,6 +34,26 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "assigned", "completed"],
     default: "pending",
   },
+  bookingType: {
+    type: String
+  },
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vehicle",
+    required: [true, "Please fill Vehicle Category"],
+  },
+  km: {
+    type: String,
+    default: "",
+  },
+  price: {
+    type: String,
+    required: [true, "Please fill price"],
+  },
+  subType: {
+    type: String,
+    default: "",
+  }
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);
