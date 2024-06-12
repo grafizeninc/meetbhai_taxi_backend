@@ -26,6 +26,10 @@ router.post(
   "/destination-vehicle/edit/:id",
   airportController.updateDestination
 );
+router.get(
+    "/airport-destination-vehicle",
+    airportController.getvehicleListByAirportDestination
+);
 
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));

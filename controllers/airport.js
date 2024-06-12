@@ -205,3 +205,58 @@ exports.addDestinationVehicle = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getvehicleListByAirportDestination = async (req, res, next) => {
+  try {
+    const destinationAirport = await Destination.findOne({
+      airportId: req.query.airportId,
+      _id: req.query.destinationId
+    });
+
+    if (!destinationAirport) {
+      res.status(201).json({
+        status: "success",
+        data: {message: "Destination not found"}
+      });
+    }
+
+    const destination = await DestinationVehicle.find({
+      destinationId: destinationAirport._id,
+    });
+    for (const d of destination) {
+      if (d.destinationId) {
+        await d.populate("destinationId").execPopulate();
+        await d.populate("vehicleId").execPopulate();
+      }
+      if (d.destinationId?.airportId) {
+        await d.destinationId.populate("airportId").execPopulate();
+      }
+    }
+    const finalData = destination.map((item, id) => ({
+      vehicleId: item.vehicleId._id.toString(),
+      price: item.price,
+      categoryName: item.vehicleId.categoryName,
+      airportName: item.destinationId.airportId.name || '',
+    }));
+
+    const vehicles = await VehicleModel.find({
+      category: { $in: finalData.map((item) => item.vehicleId) },
+    });
+
+    const data = vehicles.flatMap((vehicle) => {
+      const matchingData = finalData.filter(
+          (item) => item.vehicleId === vehicle.category.toString()
+      );
+      return matchingData.map((item) => ({
+        ...item,
+        ...vehicle.toObject(),
+      }));
+    });
+    res.status(200).json({
+      status: "success",
+      data,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
