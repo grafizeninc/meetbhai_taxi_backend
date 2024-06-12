@@ -1,46 +1,50 @@
 const mongoose = require("mongoose");
 
-const localHourlyPackagesSchema = new mongoose.Schema({
-  location: {
-    type: String,
-    required: [true, "Please fill Local Hourly Package Location"],
+const LocalPackagesSchema = new mongoose.Schema({
+  cityId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "City",
+    required: [true, "Please fill City"],
   },
-  time: {
+  packageName: {
     type: String,
-    required: [true, "Please fill Local Hourly Package Total Time"],
+    required: [true, "Please fill Local Package Name"],
   },
-  kms: {
-    type: String,
-    required: [true, "Please fill Local Hourly Package Total Kms"],
-  },
-  hatchBack: {
-    type: String,
-    default: "",
-  },
-  sedan: {
-    type: String,
-    default: "",
-  },
-  suv: {
-    type: String,
-    default: "",
-  },
-  innovaCrysta: {
-    type: String,
-    default: "",
-  },
-  tempoTr: {
-    type: String,
-    default: "",
-  },
+  // time: {
+  //   type: String,
+  //   required: [true, "Please fill Local Hourly Package Total Time"],
+  // },
+  // kms: {
+  //   type: String,
+  //   required: [true, "Please fill Local Hourly Package Total Kms"],
+  // },
+  vehicles: [{
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vehicle",
+      required: [true, "Please fill Vehicle Category"],
+    },
+    price: {
+      type: String,
+      required: [true, "Please fill price"],
+    },
+  }],
   active: {
     type: Boolean,
     default: true,
   },
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
 });
 
-const LocalHourlyPackages = mongoose.model(
-  "LocalHourlyPackages",
-  localHourlyPackagesSchema
+const LocalPackages = mongoose.model(
+  "LocalPackages",
+  LocalPackagesSchema
 );
-module.exports = LocalHourlyPackages;
+module.exports = LocalPackages;

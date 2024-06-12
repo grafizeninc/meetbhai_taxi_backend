@@ -16,4 +16,6 @@ router.post("/localHourlyPackage/:id", localPackageController.update);
 router.post("/localHourlyPackage", localPackageController.add);
 router.delete("/localHourlyPackage/:id", localPackageController.delete);
 
+router.get("/local-airport-vehicles", localPackageController.getVehicleListByLocalAirportPackage);
+
 module.exports = router;
