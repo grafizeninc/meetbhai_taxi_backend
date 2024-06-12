@@ -13,19 +13,21 @@ const hourlyRentalSchema = new mongoose.Schema({
   packageName: {
     type: String
   },
-  categoryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Vehicle",
-    required: [true, "Please fill Vehicle Category"],
-  },
-  kms: {
-    type: String,
-    required: [true, "Please fill Hourly Rental Total Kms"],
-  },
-  price: {
-    type: String,
-    required: [true, "Please fill price"],
-  },
+  vehicles: [{
+    categoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vehicle",
+      required: [true, "Please fill Vehicle Category"],
+    },
+    price: {
+      type: String,
+      required: [true, "Please fill price"],
+    },
+  }],
+  // kms: {
+  //   type: String,
+  //   required: [true, "Please fill Hourly Rental Total Kms"],
+  // },
   addedDate: {
     type: Date,
     required: false,

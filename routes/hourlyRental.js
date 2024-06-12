@@ -16,4 +16,6 @@ router.post("/hourlyRental/:id", hourlyRentalController.update);
 router.post("/hourlyRental", hourlyRentalController.add);
 router.delete("/hourlyRental/:id", hourlyRentalController.delete);
 
+router.get("/hourly-rental-vehicles", hourlyRentalController.getVehicleListByHourlyRentalPackage);
+
 module.exports = router;
