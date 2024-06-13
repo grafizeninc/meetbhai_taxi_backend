@@ -189,9 +189,7 @@ exports.getvehicleByDestination = async (req, res, next) => {
 exports.addDestinationVehicle = async (req, res, next) => {
   try {
     const destinationVehicle = await DestinationVehicle.create({
-      destinationId: req.body.destinationId,
-      vehicleId: req.body.vehicleId,
-      price: req.body.price,
+      ...req.body,
       addedDate: new Date(),
     });
 
