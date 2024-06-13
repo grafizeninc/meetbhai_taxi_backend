@@ -4,6 +4,9 @@ const Destination = require("../models/destination");
 const DestinationVehicle = require("../models/destinationVehicle");
 const VehicleModel = require("../models/vehicleModel");
 const AppError = require("../utils/appError");
+const Vehicle = require("../models/vehicle");
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
@@ -206,50 +209,20 @@ exports.addDestinationVehicle = async (req, res, next) => {
 
 exports.getvehicleListByAirportDestination = async (req, res, next) => {
   try {
-    const destinationAirport = await Destination.findOne({
-      airportId: req.query.airportId,
-      _id: req.query.destinationId
-    });
+    const destination = await DestinationVehicle.findOne({
+      _id: req.query.destinationId,
+    }).lean();
 
-    if (!destinationAirport) {
-      res.status(201).json({
-        status: "success",
-        data: {message: "Destination not found"}
-      });
+    for (const h of destination?.vehicles) {
+      h.categoryId = await Vehicle.findById(ObjectId(h.categoryId));
     }
 
-    const destination = await DestinationVehicle.find({
-      destinationId: destinationAirport._id,
-    });
-    for (const d of destination) {
-      if (d.destinationId) {
-        await d.populate("destinationId").execPopulate();
-        await d.populate("vehicleId").execPopulate();
-      }
-      if (d.destinationId?.airportId) {
-        await d.destinationId.populate("airportId").execPopulate();
-      }
-    }
-    const finalData = destination.map((item, id) => ({
-      vehicleId: item.vehicleId._id.toString(),
-      price: item.price,
-      categoryName: item.vehicleId.categoryName,
-      airportName: item.destinationId.airportId.name || '',
-    }));
+    const data = destination?.vehicles.map(item => ({
+      categoryId: item.categoryId._id,
+      categoryName: item.categoryId.categoryName,
+      price: item.price
+    }))
 
-    const vehicles = await VehicleModel.find({
-      category: { $in: finalData.map((item) => item.vehicleId) },
-    });
-
-    const data = vehicles.flatMap((vehicle) => {
-      const matchingData = finalData.filter(
-          (item) => item.vehicleId === vehicle.category.toString()
-      );
-      return matchingData.map((item) => ({
-        ...item,
-        ...vehicle.toObject(),
-      }));
-    });
     res.status(200).json({
       status: "success",
       data,

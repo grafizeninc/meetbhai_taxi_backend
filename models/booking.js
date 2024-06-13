@@ -5,13 +5,15 @@ const bookingSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  pickupLocation: {
-    type: String,
-    required: true,
+  airportId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Airport",
+    required: [true, "Please fill Destination Airport"],
   },
-  dropoffLocation: {
-    type: String,
-    required: true,
+  destinationVehicleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "DestinationVehicle",
+    required: [true, "Please fill Destination"],
   },
   pickupDate: {
     type: Date,
@@ -34,23 +36,12 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "assigned", "completed"],
     default: "pending",
   },
-  bookingType: {
-    type: String
-  },
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
     required: [true, "Please fill Vehicle Category"],
   },
   km: {
-    type: String,
-    default: "",
-  },
-  price: {
-    type: String,
-    required: [true, "Please fill price"],
-  },
-  subType: {
     type: String,
     default: "",
   }
