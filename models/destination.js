@@ -10,17 +10,17 @@ const destinationSchema = new mongoose.Schema({
     ref: "Airport",
     required: [true, "Please fill Destination Airport"],
   },
-  vehicles: [{
-    categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Vehicle",
-      required: [true, "Please fill Vehicle Category"],
-    },
-    price: {
-      type: String,
-      required: [true, "Please fill price"],
-    },
-  }],
+  // vehicles: [{
+  //   categoryId: {
+  //     type: mongoose.Schema.Types.ObjectId,
+  //     ref: "Vehicle",
+  //     required: [true, "Please fill Vehicle Category"],
+  //   },
+  //   price: {
+  //     type: String,
+  //     required: [true, "Please fill price"],
+  //   },
+  // }],
   // tags: {
   //   type: Array,
   //   default: [""],

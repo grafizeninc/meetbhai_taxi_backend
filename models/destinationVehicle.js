@@ -6,6 +6,11 @@ const DestinationVehicleVehicleSchema = new mongoose.Schema({
     ref: "Destination",
     required: [true, "Please fill Destination ID"],
   },
+  airportId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Airport",
+    required: [true, "Please fill Destination Airport"],
+  },
   name: {
     type: String
   },
