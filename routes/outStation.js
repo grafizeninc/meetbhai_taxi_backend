@@ -17,5 +17,6 @@ router.put('/out-station/edit/:id', outStationController.update);
 router.post('/out-station/add', outStationController.add);
 router.delete('/out-station/delete/:id', outStationController.delete);
 
+router.get("/out-station-vehicles", outStationController.getVehicleListByOutStationCity);
 
 module.exports = router;

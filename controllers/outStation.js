@@ -2,6 +2,7 @@ const base = require('./base');
 const OutStation = require("../models/outStation");
 const State = require("../models/state");
 const AppError = require("../utils/appError");
+const Vehicle = require("../models/vehicle");
 
 exports.getAll = base.getAll(OutStation);
 exports.getOne = base.getOne(OutStation);
@@ -38,3 +39,27 @@ exports.add = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.getVehicleListByOutStationCity = async (req, res, next) => {
+    try {
+        // const vehicle = await Vehicle.find({});
+        //
+        // for (const v of vehicle) {
+        //     v.categoryId = await Vehicle.findById(ObjectId(h.categoryId));
+        // }
+
+        // const data = vehicle?.vehicles.map(item => ({
+        //     categoryId: item.categoryId._id,
+        //     categoryName: item.categoryId.categoryName,
+        //     price: item.price
+        // }))
+        const data = await Vehicle.find({});
+
+        res.status(200).json({
+            status: "success",
+            data,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
