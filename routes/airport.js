@@ -38,4 +38,6 @@ router.post("/airport/:id", airportController.update);
 router.post("/airport", airportController.add);
 router.delete("/airport/:id", airportController.delete);
 
+router.delete("/destination-vehicle/:id", airportController.deleteDestinationVehicle);
+
 module.exports = router;
