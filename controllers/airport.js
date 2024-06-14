@@ -157,6 +157,7 @@ exports.getvehicleByDestination = async (req, res, next) => {
     const destination = await DestinationVehicle.find({
       destinationId: req.params.destination,
     });
+
     for (const d of destination) {
       if (d.destinationId) {
         await d.populate("vehicleId").execPopulate();
@@ -212,8 +213,11 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
     const destination = await DestinationVehicle.findOne({
       _id: req.query.destinationId,
     }).lean();
+    if (!destination || !Array.isArray(destination.vehicles)) {
+      return res.status(400).json({ status: "Fail", message: "Destination not found... " })
+    }
 
-    for (const h of destination?.vehicles) {
+    for (const h of destination.vehicles) {
       h.categoryId = await Vehicle.findById(ObjectId(h.categoryId));
     }
 

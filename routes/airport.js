@@ -17,19 +17,12 @@ router.post("/destination/edit/:id", airportController.updateDestination);
 router.post("/destination/tags/:id", airportController.updateDestinationTags);
 
 // Destination Vehicle
-router.get(
-  "/destination-vehicle/:destination",
-  airportController.getvehicleByDestination
-);
+router.get("/destination-vehicle/:destination",airportController.getvehicleByDestination);
 router.post("/destination-vehicle", airportController.addDestinationVehicle);
-router.post(
-  "/destination-vehicle/edit/:id",
-  airportController.updateDestination
-);
-router.get(
-    "/airport-destination-vehicle",
-    airportController.getvehicleListByAirportDestination
-);
+router.post("/destination-vehicle/edit/:id",airportController.updateDestination);
+router.get("/airport-destination-vehicle",airportController.getvehicleListByAirportDestination);
+router.get("/all-destination-vehicle", airportController.getAllDestinationVehicle);
+
 
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));
