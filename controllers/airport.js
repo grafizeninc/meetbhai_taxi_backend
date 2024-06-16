@@ -217,7 +217,7 @@ exports.addDestinationVehicle = async (req, res, next) => {
     res.status(201).json({
       status: "success",
       data: {
-        destinationVehicle,
+        ...destinationVehicle,
       },
     });
   } catch (err) {
