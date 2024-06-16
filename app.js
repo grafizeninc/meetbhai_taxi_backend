@@ -21,6 +21,7 @@ const outStationRoutes = require('./routes/outStation');
 const hourlyRentalBookingRoutes = require('./routes/hourlyRentalBooking');
 const localAirportBookingRoutes = require('./routes/localAiportBooking');
 const outStationBookingRoutes = require('./routes/outStationBooking');
+const referRoutes = require('./routes/refer');
 
 const globalErrHandler = require('./controllers/error');
 const AppError = require('./utils/appError');
@@ -61,6 +62,7 @@ app.use('/api/v1', outStationRoutes);
 app.use('/api/v1', hourlyRentalBookingRoutes);
 app.use('/api/v1', localAirportBookingRoutes);
 app.use('/api/v1', outStationBookingRoutes);
+app.use('/api/v1', referRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');

@@ -46,6 +46,13 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  referCode: {
+    type: String
+  },
+  walletAmount: {
+    type: Number,
+    default: 0
+  }
 });
 
 userSchema.pre("save", async function (next) {

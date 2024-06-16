@@ -1,8 +1,10 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
+const Refer = require("../models/refer");
 const Admin = require("../models/admin");
 const AppError = require("../utils/appError");
+const generateRandomCode = require("../utils/generateCode");
 
 const createToken = (id) => {
   return jwt.sign(
@@ -132,12 +134,25 @@ exports.login = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
   try {
+    const referCode = req.body.referCode;
+    let walletAmount = 0;
+    if (referCode) {
+        const userExist = await User.findOne({referCode: referCode}).lean();
+
+        if (userExist) {
+            const referData = await Refer.find({});
+            walletAmount = referData[0].referPrice;
+        }
+    }
+
     const user = await User.create({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
       phoneNumber: req.body.phoneNumber,
+      walletAmount: walletAmount,
+      referCode: generateRandomCode(6)
     });
 
     const token = createToken(user.id);
