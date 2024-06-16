@@ -48,7 +48,7 @@ exports.getBookingSummery = async (req, res, next) => {
     const cityId = req.query.cityId;
     const packageId = req.query.packageId;
 
-    let finalData = {}
+    let finalData = { fareAmount: 0, coveredKms: 0}
     if (userId) {
       finalData.user = await User.findById(userId);
     }
