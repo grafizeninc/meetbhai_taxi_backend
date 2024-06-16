@@ -146,6 +146,23 @@ exports.getDestination = async (req, res, next) => {
   }
 };
 
+exports.getDestinationAirports = async (req, res, next) => {
+  try {
+    const destinations = await Destination.find();
+
+    const ids = destinations.map(item => item.airportId);
+
+    const airports = await Airport.find({_id: {$in: ids}});
+
+    res.status(200).json({
+      status: "success",
+      airports,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Destination Vehicles
 
 exports.getAllDestinationVehicle = base.getAll(DestinationVehicle);

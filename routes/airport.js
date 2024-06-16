@@ -13,6 +13,7 @@ router.get("/airport/:id", airportController.getOne);
 router.get("/destination", airportController.getDestination);
 router.post("/destination", airportController.addDestination);
 router.get("/destination/:airport", airportController.getDestinationByAirport);
+router.get("/destination-airports", airportController.getDestinationAirports);
 router.post("/destination/edit/:id", airportController.updateDestination);
 router.post("/destination/tags/:id", airportController.updateDestinationTags);
 
