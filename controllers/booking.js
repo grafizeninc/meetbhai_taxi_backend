@@ -50,7 +50,6 @@ exports.getBookingSummery = async (req, res, next) => {
 
     let finalData = {}
     if (userId) {
-      console.log('user', userId)
       finalData.user = await User.findById(userId);
     }
 
