@@ -45,17 +45,16 @@ exports.getBookingsByUserId = async (req, res, next) => {
 
 exports.acceptBooking = async (req, res, next) => {
   try {
-    const booking = await AirportBooking.findById(req.params.id);
-    booking.status = "accepted";
-    if (req.body.addDriverDetails) {
-      booking.driverDetails.driverName = req.body.driverName;
-      booking.driverDetails.driverPhoneNumber = req.body.driverPhoneNumber;
-      booking.status = "assigned";
+    if (!req.body.status) {
+      return res.status(400).json({ status: "fail", message: "Status is required... " })
     }
+    const booking = await AirportBooking.findById(req.params.id);
+    booking.status = req.body.status;
+
     await booking.save();
     res.status(200).json({
       status: "success",
-      data: { booking },
+      data: booking ,
     });
   } catch (err) {
     next(err);
