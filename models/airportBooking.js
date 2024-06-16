@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema({
   },
   airportId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
+    ref: "Destination",
     required: [true, "Please fill Destination Airport"],
   },
   destinationVehicleId: {

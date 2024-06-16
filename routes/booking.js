@@ -7,7 +7,7 @@ const bookingController = require("../controllers/booking");
 router.use(authController.protect);
 router.get("/all-booking/user/:id", bookingController.getBookingsByUserId);
 router.get("/booking-summery", bookingController.getBookingSummery);
-router.get("/booking-confirmation-details", bookingController.getBookingConfirmationDetails);
+router.get("/booking-receipt", bookingController.getBookingReceipt);
 
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));
