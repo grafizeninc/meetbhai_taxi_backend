@@ -45,12 +45,12 @@ exports.addDestination = async (req, res, next) => {
         next
       );
     }
-    let tags = req.body.tags;
-    let tagsData = tags ? tags.split(",") : [""];
+    // let tags = req.body.tags;
+    // let tagsData = tags ? tags.split(",") : [""];
     await req.body;
     const destination = await Destination.create({
-      name: req.body.name,
-      tags: tagsData,
+      // name: req.body.name,
+      // tags: tagsData,
       airportId: req.body.airport,
       addedDate: new Date(),
     });
