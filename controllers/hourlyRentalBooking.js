@@ -1,10 +1,14 @@
 const Booking = require("../models/hourlyRentalbooking");
+const mainBooking = require("../models/booking");
 const base = require("./base");
 
 exports.createBooking = async (req, res, next) => {
   try {
     const newBooking = new Booking(req.body);
     const savedBooking = await newBooking.save();
+
+    await mainBooking.create({userId: savedBooking.user, hourlyRentalBookingId: savedBooking._id, bookingType: "hourlyRental"});
+
     res.status(201).json({
       status: "success",
       data: { booking: savedBooking },
@@ -74,4 +78,21 @@ exports.assignDriver = async (req, res, next) => {
   }
 };
 
-exports.deleteBooking = base.deleteOne(Booking);
+exports.deleteBooking =  async (req, res, next) => {
+  try {
+    const doc = await Booking.findByIdAndDelete(req.params.id);
+
+    if (!doc) {
+      return res.status(404).json({status: 'fail', message: 'No document found with that id'});
+    }
+
+    await mainBooking.findOneAndDelete({ airportBookingId: req.params.id });
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (error) {
+    next(error);
+  }
+};

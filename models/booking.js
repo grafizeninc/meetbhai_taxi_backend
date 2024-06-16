@@ -1,51 +1,30 @@
 const mongoose = require("mongoose");
 const bookingSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  airportId: {
+  airportBookingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
-    required: [true, "Please fill Destination Airport"],
+    ref: "AirportBooking"
   },
-  destinationVehicleId: {
+  hourlyRentalBookingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "DestinationVehicle",
-    required: [true, "Please fill Destination"],
+    ref: "HourlyRentalBooking"
   },
-  pickupDate: {
-    type: Date,
-    required: true,
-  },
-  pickupTime: {
-    type: String,
-    required: true,
-  },
-  driverDetails: {
-    driverName: {
-      type: String,
-    },
-    driverPhoneNumber: {
-      type: String,
-    },
-  },
-  status: {
-    type: String,
-    enum: ["pending", "accepted", "assigned", "completed"],
-    default: "pending",
-  },
-  categoryId: {
+  localAirportBookingId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Vehicle",
-    required: [true, "Please fill Vehicle Category"],
+    ref: "LocalAirportBooking"
   },
-  km: {
-    type: String,
-    default: "",
+  outStationBookingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "OutStationBooking"
+  },
+  bookingType: {
+    type: String
   }
-});
+}, { timestamps: true });
 
 const Booking = mongoose.model("Booking", bookingSchema);
 module.exports = Booking;

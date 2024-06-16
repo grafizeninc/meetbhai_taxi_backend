@@ -5,15 +5,13 @@ const bookingController = require("../controllers/booking");
 
 // Protect all routes after this middleware
 router.use(authController.protect);
-router.post("/booking", bookingController.createBooking);
-router.get("/booking/user/:id", bookingController.getBookingsByUserId);
-router.delete("/booking/:id", bookingController.deleteBooking);
+router.get("/all-booking/user/:id", bookingController.getBookingsByUserId);
+router.get("/booking-summery/user/:id", bookingController.getBookingSummery);
+router.get("/booking-confirmation-details", bookingController.getBookingConfirmationDetails);
 
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));
 
-router.get("/bookings", bookingController.getBookingList);
-router.post("/booking/accept/:id", bookingController.acceptBooking);
-router.post("/booking/assign/:id", bookingController.assignDriver);
+router.get("/all-bookings", bookingController.getBookingList);
 
 module.exports = router;

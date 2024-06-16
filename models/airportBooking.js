@@ -5,15 +5,15 @@ const bookingSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  cityId: {
+  airportId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "City",
-    required: [true, "Please fill City"],
+    ref: "Airport",
+    required: [true, "Please fill Destination Airport"],
   },
-  packageId: {
+  destinationVehicleId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "LocalPackages",
-    required: true,
+    ref: "DestinationVehicle",
+    required: [true, "Please fill Destination"],
   },
   pickupDate: {
     type: Date,
@@ -26,7 +26,6 @@ const bookingSchema = new mongoose.Schema({
   driverDetails: {
     driverName: {
       type: String,
-      default: ''
     },
     driverPhoneNumber: {
       type: String,
@@ -45,11 +44,8 @@ const bookingSchema = new mongoose.Schema({
   km: {
     type: String,
     default: "",
-  },
-  price: {
-    type: String
   }
 }, { timestamps: true });
 
-const Booking = mongoose.model("LocalAirportBooking", bookingSchema);
-module.exports = Booking;
+const AirportBooking = mongoose.model("AirportBooking", bookingSchema);
+module.exports = AirportBooking;

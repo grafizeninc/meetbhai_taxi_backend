@@ -8,9 +8,9 @@ const bookingSchema = new mongoose.Schema({
   fromCity: {
     type: String
   },
-  toCity: {
+  toCity: [{
     type: String
-  },
+  }],
   cityId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "City",
@@ -54,7 +54,7 @@ const bookingSchema = new mongoose.Schema({
   // price: {
   //   type: String
   // }
-});
+}, { timestamps: true });
 
 const Booking = mongoose.model("OutStationBooking", bookingSchema);
 module.exports = Booking;

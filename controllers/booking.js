@@ -1,22 +1,10 @@
 const Booking = require("../models/booking");
 const base = require("./base");
 
-exports.createBooking = async (req, res, next) => {
-  try {
-    const newBooking = new Booking(req.body);
-    const savedBooking = await newBooking.save();
-    res.status(201).json({
-      status: "success",
-      data: { booking: savedBooking },
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
 exports.getBookingList = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({}).populate("user");
+    const bookings = await Booking.find({}).populate("userId airportBookingId hourlyRentalBookingId localAirportBookingId outStationBookingId").sort({createdAt: -1});
+
     res.status(200).json({
       status: "success",
       data: { bookings },
@@ -29,7 +17,7 @@ exports.getBookingList = async (req, res, next) => {
 exports.getBookingsByUserId = async (req, res, next) => {
   try {
     const userId = req.params.id;
-    const bookings = await Booking.find({ user: userId }).populate("user");
+    const bookings = await Booking.find({ userId: userId }).populate("userId airportBookingId hourlyRentalBookingId localAirportBookingId outStationBookingId");
       res.status(200).json({
           status: "success",
           data: { bookings }
@@ -39,39 +27,31 @@ exports.getBookingsByUserId = async (req, res, next) => {
   }
 };
 
-exports.acceptBooking = async (req, res, next) => {
+exports.getBookingSummery = async (req, res, next) => {
   try {
-    const booking = await Booking.findById(req.params.id);
-    booking.status = "accepted";
-    if (req.body.addDriverDetails) {
-      booking.driverDetails.driverName = req.body.driverName;
-      booking.driverDetails.driverPhoneNumber = req.body.driverPhoneNumber;
-      booking.status = "assigned";
-    }
-    await booking.save();
+    const userId = req.params.id;
+    const categoryId = req.query.categoryId;
+    const bookingId = req.query.bookingId;
+
     res.status(200).json({
       status: "success",
-      data: { booking },
+      data: { }
     });
   } catch (err) {
     next(err);
   }
 };
 
-exports.assignDriver = async (req, res, next) => {
+exports.getBookingConfirmationDetails = async (req, res, next) => {
   try {
-    const booking = await Booking.findById(req.params.id);
-    booking.driverDetails.driverName = req.body.driverName;
-    booking.driverDetails.driverPhoneNumber = req.body.driverPhoneNumber;
-    booking.status = "assigned";
-    await booking.save();
+    const bookingId = req.params.id;
+
+
     res.status(200).json({
       status: "success",
-      data: { booking },
+      data: {  }
     });
   } catch (err) {
     next(err);
   }
 };
-
-exports.deleteBooking = base.deleteOne(Booking);
