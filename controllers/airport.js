@@ -45,12 +45,19 @@ exports.addDestination = async (req, res, next) => {
         next
       );
     }
-    // let tags = req.body.tags;
-    // let tagsData = tags ? tags.split(",") : [""];
+
+    const checkDestinationAirportExist = await Destination.find({airportId: req.body.airport}).lean();
+    if (checkDestinationAirportExist) {
+      return next(
+          new AppError(401, "fail", "Airport already exist"),
+          req,
+          res,
+          next
+      );
+    }
+
     await req.body;
     const destination = await Destination.create({
-      // name: req.body.name,
-      // tags: tagsData,
       airportId: req.body.airport,
       addedDate: new Date(),
     });
