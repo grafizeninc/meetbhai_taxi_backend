@@ -111,17 +111,11 @@ exports.updateDestinationTags = async (req, res, next) => {
 
 exports.getDestinationByAirport = async (req, res, next) => {
   try {
-    const destination = await Destination.find({
-      airportId: req.params.airport,
-    });
-    for (const d of destination) {
-      if (d.airportId) {
-        await d.populate("airportId").execPopulate();
-      }
-    }
+    const destinationList = await DestinationVehicle.find({ destinationAirportId: req.params.airport }).populate('vehicles.categoryId'); ;
+
     res.status(200).json({
       status: "success",
-      destination,
+      destinationList,
     });
   } catch (err) {
     next(err);
