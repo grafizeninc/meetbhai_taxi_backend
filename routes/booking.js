@@ -6,7 +6,7 @@ const bookingController = require("../controllers/booking");
 // Protect all routes after this middleware
 router.use(authController.protect);
 router.get("/all-booking/user/:id", bookingController.getBookingsByUserId);
-router.get("/booking-summery/user/:id", bookingController.getBookingSummery);
+router.get("/booking-summery", bookingController.getBookingSummery);
 router.get("/booking-confirmation-details", bookingController.getBookingConfirmationDetails);
 
 // Only admin have permission to access for the below APIs
