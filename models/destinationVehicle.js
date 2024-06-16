@@ -1,15 +1,10 @@
 const mongoose = require("mongoose");
 
 const DestinationVehicleVehicleSchema = new mongoose.Schema({
-  destinationId: {
+  destinationAirportId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Destination",
     required: [true, "Please fill Destination ID"],
-  },
-  airportId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
-    required: [true, "Please fill Destination Airport"],
   },
   name: {
     type: String
