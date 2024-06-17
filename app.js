@@ -23,6 +23,7 @@ const localAirportBookingRoutes = require('./routes/localAiportBooking');
 const outStationBookingRoutes = require('./routes/outStationBooking');
 const referRoutes = require('./routes/refer');
 const driverRoutes = require('./routes/driver');
+const policyRoutes = require('./routes/policy');
 
 const globalErrHandler = require('./controllers/error');
 const AppError = require('./utils/appError');
@@ -66,6 +67,7 @@ app.use('/api/v1', localAirportBookingRoutes);
 app.use('/api/v1', outStationBookingRoutes);
 app.use('/api/v1', referRoutes);
 app.use('/api/v1', driverRoutes);
+app.use('/api/v1', policyRoutes);
 
 app.use('*', (req, res, next) => {
     const err = new AppError(404, 'fail', 'undefined route');
