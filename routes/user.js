@@ -12,11 +12,14 @@ router.post("/admin/signup", authController.adminSignup);
 // Protect all routes after this middleware
 router.use(authController.protect);
 
+router.get('/users', userController.getAll);
+router.get('/user/:id', userController.getUser);
+
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));
 
-router.get('/users', userController.getAll);
-router.get('/user/:id', userController.getUser);
+// router.get('/users', userController.getAll);
+// router.get('/user/:id', userController.getUser);
 router.put('/user/edit/:id', userController.update);
 router.delete('/user/delete/:id', userController.delete);
 

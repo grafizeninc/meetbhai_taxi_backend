@@ -49,6 +49,7 @@ app.use(hpp());
 
 
 app.use('/auth', userRoutes);
+app.use('/api/v1', userRoutes);
 app.use('/api/v1', airportRoutes);
 app.use('/api/v1', tripRoutes);
 app.use('/api/v1', vehicleRoutes);
