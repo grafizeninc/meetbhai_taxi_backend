@@ -9,6 +9,15 @@ const driverSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Please fill mobile number"],
   },
+  rcBook: {
+    type: String
+  },
+  licence: {
+    type: String
+  },
+  insurance: {
+    type: String
+  },
   active: {
     type: Boolean,
     default: true,

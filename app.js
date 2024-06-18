@@ -29,6 +29,7 @@ const globalErrHandler = require('./controllers/error');
 const AppError = require('./utils/appError');
 const app = express();
 app.use(cors());
+app.use('/uploads',express.static('uploads'));//for image
 
 app.use(helmet());
 
