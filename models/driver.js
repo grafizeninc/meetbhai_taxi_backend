@@ -22,7 +22,7 @@ const driverSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-}, { timestamp: true });
+}, { timestamps: true });
 
 const Driver = mongoose.model("Driver", driverSchema);
 module.exports = Driver;

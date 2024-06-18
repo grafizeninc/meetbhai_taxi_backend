@@ -5,14 +5,22 @@ const couponSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill Coupon name"],
   },
+  couponCode: {
+    type: String
+  },
   amount: {
     type: String,
     required: [true, "Please fill Coupon amount"],
   },
-  description: {
+  discountType: {
     type: String,
-    required: false,
+    required: [true, "Please fill discount type"],
+    enum: ["flat", "percentage"]
   },
+  // description: {
+  //   type: String,
+  //   required: false,
+  // },
   startDate: {
     type: String,
     required: [true, "Please fill Start Date"],
@@ -22,19 +30,18 @@ const couponSchema = new mongoose.Schema({
     required: false,
     default: "",
   },
-  addedDate: {
-    type: Date,
-    required: false,
-  },
-  updatedDate: {
-    type: Date,
-    required: false,
+  expireMessage: {
+    type: String,
   },
   active: {
     type: Boolean,
     default: true,
   },
-});
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Vehicle"
+  },
+}, { timestamps: true });
 
 const Coupon = mongoose.model("Coupon", couponSchema);
 module.exports = Coupon;
