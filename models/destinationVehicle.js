@@ -22,7 +22,7 @@ const DestinationVehicleVehicleSchema = new mongoose.Schema({
   }],
   tags: {
     type: Array,
-    default: [""],
+    default: [],
   },
   addedDate: {
     type: Date,

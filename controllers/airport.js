@@ -77,8 +77,8 @@ exports.updateDestination = base.updateOne(Destination);
 exports.updateDestinationTags = async (req, res, next) => {
   try {
     let tags = req.body.tags;
-    let tagsData = tags ? tags.split(",") : [""];
-    const doc = await Model.findByIdAndUpdate(
+    let tagsData = tags? tags.split(",").map(tag => tag.trim()) : [];
+    const doc = await DestinationVehicle.findByIdAndUpdate(
       req.params.id,
       {
         tags: tagsData,
@@ -91,7 +91,7 @@ exports.updateDestinationTags = async (req, res, next) => {
 
     if (!doc) {
       return next(
-        new AppError(404, "fail", "No Destination found with that id"),
+        new AppError(404, "fail", "No Destination Vehicle found with that id"),
         req,
         res,
         next
