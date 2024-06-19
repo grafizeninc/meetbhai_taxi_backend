@@ -47,7 +47,7 @@ exports.addDestination = async (req, res, next) => {
     }
 
     const checkDestinationAirportExist = await Destination.find({airportId: req.body.airport}).lean();
-    if (checkDestinationAirportExist) {
+    if (!checkDestinationAirportExist) {
       return next(
           new AppError(401, "fail", "Airport already exist"),
           req,
