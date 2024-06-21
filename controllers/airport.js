@@ -218,7 +218,7 @@ exports.addDestinationVehicle = async (req, res, next) => {
     res.status(201).json({
       status: "success",
       data: {
-        ...destinationVehicle,
+        destinationVehicle,
       },
     });
   } catch (err) {
@@ -242,7 +242,12 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
     const data = destination?.vehicles.map(item => ({
       categoryId: item.categoryId._id,
       categoryName: item.categoryId.categoryName,
-      price: item.price
+      price: item.price,
+      seat: item.seat, 
+      waterBottle: item.waterBottle,
+      fuelType: item.fuelType,
+      ac: item.ac,
+      carrier: item.carrier,
     }))
 
     res.status(200).json({

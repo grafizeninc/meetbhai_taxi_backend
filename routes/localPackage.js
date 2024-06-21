@@ -7,7 +7,7 @@ const localPackageController = require("../controllers/localPackage");
 router.use(authController.protect);
 
 router.get("/localHourlyPackages", localPackageController.getAll);
-router.get("/localHourlyPackage/:id", localPackageController.getOne);
+router.get("/localHourlyPackage/:city", localPackageController.getPackagesByCity);
 
 // Only admin have permission to access for the below APIs
 router.use(authController.restrictTo("admin"));

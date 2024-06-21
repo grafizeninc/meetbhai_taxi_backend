@@ -16,6 +16,26 @@ const OutStationSchema = new mongoose.Schema({
             type: String,
             required: [true, "Please fill price"],
         },
+        seat: {
+            type: String,
+            required: [false, "Please fill seat"],
+          },
+          waterBottle:{
+            type: String,
+            required: [false, "Please fill waterBottle"],
+          },
+          fuelType:{
+            type: String,
+            required: [false, "Please fill fuel type"],
+          },
+          ac:{
+            type: String,
+            required: [false, "Please fill AC"],
+          },
+          carrier:{
+            type: String,
+            required: [false, "Please fill carrier"],
+          },
     }],
     addedDate: {
         type: Date,

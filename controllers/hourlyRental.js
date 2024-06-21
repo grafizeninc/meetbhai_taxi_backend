@@ -40,7 +40,12 @@ exports.getVehicleListByHourlyRentalPackage = async (req, res, next) => {
     const data = hourlyRentalData?.vehicles.map(item => ({
       categoryId: item.categoryId._id,
       categoryName: item.categoryId.categoryName,
-      price: item.price
+      price: item.price,
+      seat: item.seat, 
+      waterBottle: item.waterBottle,
+      fuelType: item.fuelType,
+      ac: item.ac,
+      carrier: item.carrier,
     }))
 
     res.status(200).json({

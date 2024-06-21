@@ -5,7 +5,6 @@ const localPackageModel = require("../models/localHourlyPackages");
 const Vehicle = require("../models/vehicle");
 
 exports.getAll = base.getAll(localPackageModel);
-exports.getOne = base.getOne(localPackageModel);
 exports.update = base.updateOne(localPackageModel);
 exports.delete = base.deleteOne(localPackageModel);
 exports.add = async (req, res, next) => {
@@ -20,6 +19,18 @@ exports.add = async (req, res, next) => {
       data: {
         localHourlyPackage,
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+exports.getPackagesByCity = async (req, res, next) => {
+  try {
+    const localPackageList = await localPackageModel.find({ cityId: req.params.city }).populate('vehicles.categoryId'); ;
+
+    res.status(200).json({
+      status: "success",
+      localPackageList,
     });
   } catch (err) {
     next(err);
@@ -40,7 +51,12 @@ exports.getVehicleListByLocalAirportPackage = async (req, res, next) => {
     const data = packageData?.vehicles.map(item => ({
       categoryId: item.categoryId._id,
       categoryName: item.categoryId.categoryName,
-      price: item.price
+      price: item.price,
+      seat: item.seat, 
+      waterBottle: item.waterBottle,
+      fuelType: item.fuelType,
+      ac: item.ac,
+      carrier: item.carrier,
     }))
 
     res.status(200).json({
