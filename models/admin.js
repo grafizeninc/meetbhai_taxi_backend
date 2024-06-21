@@ -37,10 +37,12 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill your Phone Number"],
   },
-  role: {
-    type: String,
-    enum: ["superadmin", "admin"],
-    default: "admin",
+  roleId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "RolePermission"
+    // type: String,
+    // enum: ["superadmin", "admin"],
+    // default: "admin",
   },
   active: {
     type: Boolean,

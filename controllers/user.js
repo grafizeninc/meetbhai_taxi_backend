@@ -1,5 +1,20 @@
 const User = require("../models/user");
+const Admin = require("../models/admin");
 const base = require("./base");
+const jwt = require("jsonwebtoken");
+
+const createToken = (id) => {
+    return jwt.sign(
+        {
+            id,
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn: process.env.JWT_EXPIRES_IN,
+        }
+    );
+};
+
 
 exports.getUser = base.getOne(User);
 // exports.getAll = base.getAll(User);
@@ -33,6 +48,32 @@ exports.getAll = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             data
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// Admin user for role wise
+exports.adminUser = async (req, res, next) => {
+    try {
+        const admin = await Admin.create({
+            name: req.body.name,
+            email: req.body.email,
+            password: req.body.password,
+            passwordConfirm: req.body.passwordConfirm,
+            phoneNumber: req.body.phoneNumber,
+            roleId: req.body.roleId
+        });
+
+        const token = createToken(admin.id);
+
+        admin.password = undefined;
+
+        res.status(201).json({
+            status: "success",
+            token,
+            data: admin
         });
     } catch (err) {
         next(err);
