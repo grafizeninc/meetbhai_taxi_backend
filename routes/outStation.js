@@ -11,7 +11,7 @@ router.get('/out-station/:id', outStationController.getOne);
 
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo('admin'));
+// router.use(authController.restrictTo('admin'));
 
 router.put('/out-station/edit/:id', outStationController.update);
 router.post('/out-station/add', outStationController.add);

@@ -7,7 +7,7 @@ const referController = require("../controllers/refer")
 router.use(authController.protect);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post('/refer', referController.addRefer);
 

@@ -7,7 +7,7 @@ const dashboardController = require("../controllers/dashboard");
 router.use(authController.protect);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.get("/dashboard", dashboardController.getDashboardDetails);
 

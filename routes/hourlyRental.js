@@ -10,7 +10,7 @@ router.get("/hourlyRentals", hourlyRentalController.getAll);
 router.get("/hourlyRental/:id", hourlyRentalController.getOne);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/hourlyRental/:id", hourlyRentalController.update);
 router.post("/hourlyRental", hourlyRentalController.add);

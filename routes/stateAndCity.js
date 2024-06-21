@@ -13,7 +13,7 @@ router.get("/cities", stateAndCityController.getAllCity);
 router.get("/city/:id", stateAndCityController.getOneCity);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/state/:id", stateAndCityController.updateState);
 router.post("/state", stateAndCityController.addState);

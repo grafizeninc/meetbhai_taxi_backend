@@ -10,7 +10,7 @@ router.get("/out-station-booking/user/:id", bookingController.getBookingsByUserI
 router.delete("/out-station-booking/:id", bookingController.deleteBooking);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.get("/out-station-bookings", bookingController.getBookingList);
 router.post("/out-station-booking/accept/:id", bookingController.acceptBooking);

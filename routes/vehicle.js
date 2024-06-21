@@ -13,7 +13,7 @@ router.get("/vehicle-models", vehicleController.getModelAll);
 router.get("/vehicle-model/:id", vehicleController.getModelOne);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/vehicle/:id", vehicleController.update);
 router.post("/vehicle", vehicleController.add);

@@ -10,7 +10,7 @@ router.get("/coupons", couponController.getAll);
 router.get("/coupon/:id", couponController.getOne);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/coupon/:id", couponController.update);
 router.post("/coupon", couponController.add);

@@ -9,7 +9,7 @@ router.get("/policies", policyController.getAll);
 
 // Only admin have permission to access for the below APIs
 
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 router.post("/policy", policyController.add);
 router.post("/policy/:id", policyController.update);
 router.get("/policy/:id", policyController.getOne);

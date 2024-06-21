@@ -10,7 +10,7 @@ router.get("/trips", tripController.getAll);
 router.get("/trip/:id", tripController.getOne);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/trip/:id", tripController.update);
 router.post("/trip", tripController.add);

@@ -26,7 +26,7 @@ router.get("/all-destination-vehicle", airportController.getAllDestinationVehicl
 
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/airport/:id", airportController.update);
 router.post("/airport", airportController.add);

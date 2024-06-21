@@ -19,7 +19,7 @@ router.get('/user/:id', userController.getUser);
 router.post("/admin-user", userController.adminUser);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 // router.get('/users', userController.getAll);
 // router.get('/user/:id', userController.getUser);

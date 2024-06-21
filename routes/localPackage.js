@@ -10,7 +10,7 @@ router.get("/localHourlyPackages", localPackageController.getAll);
 router.get("/localHourlyPackage/:city", localPackageController.getPackagesByCity);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/localHourlyPackage/:id", localPackageController.update);
 router.post("/localHourlyPackage", localPackageController.add);

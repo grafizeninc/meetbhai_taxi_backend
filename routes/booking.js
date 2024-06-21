@@ -10,7 +10,7 @@ router.get("/booking-summery", bookingController.getBookingSummery);
 router.get("/booking-receipt", bookingController.getBookingReceipt);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.get("/all-bookings", bookingController.getBookingList);
 

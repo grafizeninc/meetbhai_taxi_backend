@@ -10,7 +10,7 @@ router.get("/role-permissions", rolePermissionController.getAll);
 router.get("/role-permission/:id", rolePermissionController.getOne);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/role-permission/:id", rolePermissionController.update);
 router.post("/role-permission", rolePermissionController.add);

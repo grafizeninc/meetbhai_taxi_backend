@@ -15,7 +15,7 @@ const uploadImages = upload.fields([
 router.use(authController.protect);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.post("/driver", uploadImages ,driverController.add);
 router.get("/drivers", driverController.getAll);

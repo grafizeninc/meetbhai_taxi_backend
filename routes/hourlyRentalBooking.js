@@ -10,7 +10,7 @@ router.get("/hourly-rental-booking/user/:id", bookingController.getBookingsByUse
 router.delete("/hourly-rental-booking/:id", bookingController.deleteBooking);
 
 // Only admin have permission to access for the below APIs
-router.use(authController.restrictTo("admin"));
+// router.use(authController.restrictTo("admin"));
 
 router.get("/hourly-rental-bookings", bookingController.getBookingList);
 router.post("/hourly-rental-booking/accept/:id", bookingController.acceptBooking);
