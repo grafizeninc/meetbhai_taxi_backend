@@ -18,6 +18,7 @@ router.get('/user/:id', userController.getUser);
 // Admin users with role id
 router.post("/admin-user", userController.adminUser);
 
+
 // Only admin have permission to access for the below APIs
 // router.use(authController.restrictTo("admin"));
 
@@ -25,5 +26,14 @@ router.post("/admin-user", userController.adminUser);
 // router.get('/user/:id', userController.getUser);
 router.put('/user/edit/:id', userController.update);
 router.delete('/user/delete/:id', userController.delete);
+
+
+
+router.get('/admin-user/:id', userController.getAdminUser);
+router.get('/all-admin-users', userController.getAllAdminUser);
+router.post('/admin-user/edit/:id', userController.updateAdminUser);
+router.delete('/admin-user/delete/:id', userController.deleteAdminUser);
+
+
 
 module.exports = router;

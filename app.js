@@ -5,6 +5,8 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 
 const userRoutes = require('./routes/user');
@@ -31,7 +33,12 @@ const globalErrHandler = require('./controllers/error');
 const AppError = require('./utils/appError');
 const app = express();
 app.use(cors());
-app.use('/uploads',express.static('uploads'));//for image
+
+const uploadsDir = path.join(__dirname,  'uploads/img/trip');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads/img/trip',express.static('uploads/img/trip'));//for image
 
 app.use(helmet());
 

@@ -5,6 +5,7 @@ const localPackageModel = require("../models/localHourlyPackages");
 const Vehicle = require("../models/vehicle");
 
 exports.getAll = base.getAll(localPackageModel);
+exports.getOne = base.getOne(localPackageModel);
 exports.update = base.updateOne(localPackageModel);
 exports.delete = base.deleteOne(localPackageModel);
 exports.add = async (req, res, next) => {

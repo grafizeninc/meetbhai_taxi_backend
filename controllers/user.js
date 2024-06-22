@@ -55,6 +55,13 @@ exports.getAll = async (req, res, next) => {
 };
 
 // Admin user for role wise
+
+
+exports.getAdminUser = base.getOne(Admin);
+exports.getAllAdminUser = base.getAll(Admin);
+exports.updateAdminUser = base.updateOne(Admin);
+exports.deleteAdminUser = base.deleteOne(Admin);
+
 exports.adminUser = async (req, res, next) => {
     try {
         const admin = await Admin.create({
