@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user");
 const authController = require("../controllers/auth");
+const otpController = require("../controllers/otp");
 
 router.post("/login", authController.login);
 router.post("/signup", authController.signup);
@@ -34,6 +35,9 @@ router.get('/all-admin-users', userController.getAllAdminUser);
 router.post('/admin-user/edit/:id', userController.updateAdminUser);
 router.delete('/admin-user/delete/:id', userController.deleteAdminUser);
 
+// OTP
+router.post("/user/send-otp", otpController.sendOtp);
+router.post("/user/verify-otp", otpController.verifyOtp);
 
 
 module.exports = router;
