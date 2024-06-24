@@ -22,5 +22,6 @@ router.get("/drivers", driverController.getAll);
 router.post("/driver/:id", driverController.update);
 router.get("/driver/:id", driverController.getOne);
 router.delete("/driver/:id", driverController.delete);
+router.delete("/flushImages", driverController.flushImages);
 
 module.exports = router;
