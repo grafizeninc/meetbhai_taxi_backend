@@ -2,6 +2,9 @@ const base = require("./base");
 const State = require("../models/state");
 const City = require("../models/city");
 const AppError = require("../utils/appError");
+const path = require('path');
+const csv = require('csvtojson');
+const xlsx = require('xlsx');
 
 exports.getAllState = base.getAll(State);
 exports.getOneState = base.getOne(State);
@@ -57,5 +60,62 @@ exports.addCity = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+const processCSV = async (filePath) => {
+  const jsonArray = await csv().fromFile(filePath);
+  const currentDate = new Date();
+  jsonArray.forEach(item => {
+    item.addedDate = currentDate;
+    item.fileType = 'csv';
+  });
+  return jsonArray;
+}
+const processExcel = (filePath) => {
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const currentDate = new Date();
+  worksheet.forEach(item => {
+    item.addedDate = currentDate;
+    item.fileType = 'excel';
+  });
+  return worksheet;
+};
+exports.handleStateUpload = async (req, res) => {
+  try {
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let jsonArray;
+    if (ext === '.csv') {
+      jsonArray = await processCSV(filePath);
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      jsonArray = processExcel(filePath);
+    } else {
+      return res.status(400).json({ error: 'Unsupported file format' });
+    }
+    const savedFiles = await State.insertMany(jsonArray);
+    res.json({ files: savedFiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.handleCityUpload = async (req, res) => {
+  try {
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let jsonArray;
+    if (ext === '.csv') {
+      jsonArray = await processCSV(filePath);
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      jsonArray = processExcel(filePath);
+    } else {
+      return res.status(400).json({ error: 'Unsupported file format' });
+    }
+    const savedFiles = await City.insertMany(jsonArray);
+    res.json({ files: savedFiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

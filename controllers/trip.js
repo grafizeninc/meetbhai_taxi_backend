@@ -19,22 +19,16 @@ const fileFilter = (req, file, cb) => {
     cb(null, false);
   }
 }
-// const upload = multer({
-//   storage: storage,
-//   limits: {
-//     fileSize: 1024 * 1024 * 10
-//   },
-//   fileFilter: fileFilter,
-// });
 
 exports.add = async (req, res) => {
   try {
-    const { name, price } = req.body;
+    const { name, price,description } = req.body;
     const imagePath = req.file ? `uploads/img/trip/${req.file.filename}` : '';
 
     const trip = await Trip.create({
       name: name,
       price: price,
+      description: description,
       image: `${BASE_URL}/${imagePath}`
     });
 
@@ -46,28 +40,6 @@ exports.add = async (req, res) => {
     console.log('err----', err)
     next(err);
   }
-  // upload.single('image')(req, res, (err) => {
-  //   if (err instanceof multer.MulterError) {
-  //     return res.status(500).json(err);
-  //   } else if (err) {
-  //     return res.status(500).json(err);
-  //   }
-  //   const { name, price } = req.body;
-  //   const imagePath = req.file ? `uploads/img/trip/${req.file.filename}` : '';
-  //   const trip = new Trip({
-  //     name,
-  //     price,
-  //     image: `${BASE_URL}/${imagePath}`
-  //   });
-  //   trip.save()
-  //     .then(() => res.status(201).json({
-  //       status: "success",
-  //       data: {
-  //         trip,
-  //       }
-  //     }))
-  //     .catch(error => res.status(500).json({ error }));
-  // });
 };
 exports.getAll = base.getAll(Trip);
 exports.getOne = base.getOne(Trip);

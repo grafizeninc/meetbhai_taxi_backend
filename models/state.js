@@ -10,6 +10,9 @@ const stateSchema = new mongoose.Schema({
     required: [true, "Please fill State Short Code"],
     unique: true,
   },
+  fileType: {
+    type: String,
+  },
   addedDate: {
     type: Date,
     required: false,

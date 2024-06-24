@@ -7,6 +7,9 @@ const AppError = require("../utils/appError");
 const Vehicle = require("../models/vehicle");
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
+const csv = require('csvtojson');
+const xlsx = require('xlsx');
+const path = require('path');
 
 exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
@@ -46,13 +49,13 @@ exports.addDestination = async (req, res, next) => {
       );
     }
 
-    const checkDestinationAirportExist = await Destination.find({airportId: req.body.airport}).lean();
+    const checkDestinationAirportExist = await Destination.find({ airportId: req.body.airport }).lean();
     if (!checkDestinationAirportExist) {
       return next(
-          new AppError(401, "fail", "Airport already exist"),
-          req,
-          res,
-          next
+        new AppError(401, "fail", "Airport already exist"),
+        req,
+        res,
+        next
       );
     }
 
@@ -77,7 +80,7 @@ exports.updateDestination = base.updateOne(Destination);
 exports.updateDestinationTags = async (req, res, next) => {
   try {
     let tags = req.body.tags;
-    let tagsData = tags? tags.split(",").map(tag => tag.trim()) : [];
+    let tagsData = tags ? tags.split(",").map(tag => tag.trim()) : [];
     const doc = await DestinationVehicle.findByIdAndUpdate(
       req.params.id,
       {
@@ -111,7 +114,7 @@ exports.updateDestinationTags = async (req, res, next) => {
 
 exports.getDestinationByAirport = async (req, res, next) => {
   try {
-    const destinationList = await DestinationVehicle.find({ destinationAirportId: req.params.airport }).populate('vehicles.categoryId'); ;
+    const destinationList = await DestinationVehicle.find({ destinationAirportId: req.params.airport }).populate('vehicles.categoryId');;
 
     res.status(200).json({
       status: "success",
@@ -153,7 +156,7 @@ exports.getDestinationAirports = async (req, res, next) => {
 
     const ids = destinations.map(item => item.airportId);
 
-    const airports = await Airport.find({_id: {$in: ids}});
+    const airports = await Airport.find({ _id: { $in: ids } });
 
     res.status(200).json({
       status: "success",
@@ -243,7 +246,7 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
       categoryId: item.categoryId._id,
       categoryName: item.categoryId.categoryName,
       price: item.price,
-      seat: item.seat, 
+      seat: item.seat,
       waterBottle: item.waterBottle,
       fuelType: item.fuelType,
       ac: item.ac,
@@ -256,5 +259,46 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+
+
+const processCSV = async (filePath) => {
+  const jsonArray = await csv().fromFile(filePath);
+  const currentDate = new Date();
+  jsonArray.forEach(item => {
+    item.addedDate = currentDate;
+    item.fileType = 'csv';
+  });
+  return jsonArray;
+}
+const processExcel = (filePath) => {
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const currentDate = new Date();
+  worksheet.forEach(item => {
+    item.addedDate = currentDate;
+    item.fileType = 'excel';
+  });
+  return worksheet;
+};
+exports.handleAirportUpload = async (req, res) => {
+  try {
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let jsonArray;
+    if (ext === '.csv') {
+      jsonArray = await processCSV(filePath);
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      jsonArray = processExcel(filePath);
+    } else {
+      return res.status(400).json({ error: 'Unsupported file format' });
+    }
+    const savedFiles = await Airport.insertMany(jsonArray);
+    res.json({ files: savedFiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };

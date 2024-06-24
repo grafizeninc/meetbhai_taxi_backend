@@ -3,6 +3,9 @@ const path = require('path');
 
 exports.storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        if(file.fieldname === 'airport' || 'state' || 'city'){
+            cb(null, './uploads/img/bulkUpload');
+        }
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/gif') {
             if(file.fieldname === 'rcBook'){
                 cb(null, './uploads/img/driverDetails/rcBook');
@@ -13,9 +16,10 @@ exports.storage = multer.diskStorage({
             } else if(file.fieldname === 'trip'){
                 cb(null, './uploads/img/trip');
             }
-        } else {
+            else {
             cb(null, './uploads/other');
         }
+    }
     },
 
     filename: function (req, file, cb) {
@@ -23,4 +27,4 @@ exports.storage = multer.diskStorage({
         cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
         // cb(null, file.originalname)
     }
-})
+});
