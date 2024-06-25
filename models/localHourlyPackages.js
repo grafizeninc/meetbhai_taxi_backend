@@ -49,10 +49,6 @@ const LocalPackagesSchema = new mongoose.Schema({
       required: [false, "Please fill carrier"],
     },
   }],
-  active: {
-    type: Boolean,
-    default: true,
-  },
   addedDate: {
     type: Date,
     required: false,
@@ -60,6 +56,10 @@ const LocalPackagesSchema = new mongoose.Schema({
   updatedDate: {
     type: Date,
     required: false,
+  },
+  active: {
+    type: Boolean,
+    default: true,
   },
 });
 

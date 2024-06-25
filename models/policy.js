@@ -14,7 +14,15 @@ const policySchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-}, { timestamp: true });
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
+});
 
 const Policy = mongoose.model("Policy", policySchema);
 module.exports = Policy;

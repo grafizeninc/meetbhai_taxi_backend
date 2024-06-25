@@ -16,8 +16,12 @@ exports.getDashboardDetails = async (req, res, next) => {
 
     const bookingCount = finalBooking.reduce((acc, current) => {
       const status = current.status;
+      const type = current.type;
       acc.total[status] = (acc.total[status] || 0) + 1;
-      acc.byType[current.type][status] = (acc.byType[current.type][status] || 0) + 1;
+      if (!acc.byType[type]) {
+        acc.byType[type] = {};
+      }
+      acc.byType[type][status] = (acc.byType[type][status] || 0) + 1;
       return acc;
     }, { total: {}, byType: { airport: {}, hourlyRental: {}, localAirport: {}, outStation: {} } });
 

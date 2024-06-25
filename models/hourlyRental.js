@@ -6,10 +6,6 @@ const hourlyRentalSchema = new mongoose.Schema({
     ref: "City",
     required: [true, "Please fill City"],
   },
-  time: {
-    type: String,
-    required: [true, "Please fill Hourly Rental Total Time"],
-  },
   packageName: {
     type: String
   },

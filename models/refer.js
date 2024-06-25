@@ -10,7 +10,15 @@ const referSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-}, {timestamp: true});
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
+});
 
 const Refer = mongoose.model("Refer", referSchema);
 module.exports = Refer;

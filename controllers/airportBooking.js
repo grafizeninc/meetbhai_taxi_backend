@@ -7,7 +7,7 @@ exports.createBooking = async (req, res, next) => {
     const newBooking = new AirportBooking(req.body);
     const savedBooking = await newBooking.save();
 
-    await Booking.create({userId: savedBooking.user, airportBookingId: savedBooking._id, bookingType: "airport"});
+    await Booking.create({ userId: savedBooking.user, airportBookingId: savedBooking._id, bookingType: "airport" });
 
     res.status(201).json({
       status: "success",
@@ -34,10 +34,10 @@ exports.getBookingsByUserId = async (req, res, next) => {
   try {
     const userId = req.params.id;
     const bookings = await AirportBooking.find({ user: userId }).populate("user");
-      res.status(200).json({
-          status: "success",
-          data: { bookings }
-      });
+    res.status(200).json({
+      status: "success",
+      data: { bookings }
+    });
   } catch (err) {
     next(err);
   }
@@ -54,7 +54,7 @@ exports.acceptBooking = async (req, res, next) => {
     await booking.save();
     res.status(200).json({
       status: "success",
-      data: booking ,
+      data: booking,
     });
   } catch (err) {
     next(err);
@@ -77,12 +77,12 @@ exports.assignDriver = async (req, res, next) => {
   }
 };
 
-exports.deleteBooking =  async (req, res, next) => {
+exports.deleteBooking = async (req, res, next) => {
   try {
     const doc = await AirportBooking.findByIdAndDelete(req.params.id);
 
     if (!doc) {
-      return res.status(404).json({status: 'fail', message: 'No document found with that id'});
+      return res.status(404).json({ status: 'fail', message: 'No document found with that id' });
     }
 
     await Booking.findOneAndDelete({ airportBookingId: req.params.id });

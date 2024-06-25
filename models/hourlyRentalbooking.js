@@ -47,8 +47,16 @@ const bookingSchema = new mongoose.Schema({
   },
   price: {
     type: String
-  }
-}, { timestamps: true });
+  },
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
+});
 
 const Booking = mongoose.model("HourlyRentalBooking", bookingSchema);
 module.exports = Booking;

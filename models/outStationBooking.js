@@ -51,10 +51,18 @@ const bookingSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
   // price: {
   //   type: String
   // }
-}, { timestamps: true });
+});
 
 const Booking = mongoose.model("OutStationBooking", bookingSchema);
 module.exports = Booking;

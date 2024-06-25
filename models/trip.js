@@ -15,6 +15,14 @@ const tripSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    addedDate: {
+        type: Date,
+        required: false,
+    },
+    updatedDate: {
+        type: Date,
+        required: false,
+    },
 });
 const Trip = mongoose.model("Trip", tripSchema);
 module.exports = Trip;

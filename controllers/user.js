@@ -2,6 +2,19 @@ const User = require("../models/user");
 const Admin = require("../models/admin");
 const base = require("./base");
 const jwt = require("jsonwebtoken");
+const multer = require('multer');
+const path = require('path');
+const BASE_URL = process.env.APP_URL;
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, '/uploads/img/profile');
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
 
 const createToken = (id) => {
     return jwt.sign(
@@ -18,8 +31,11 @@ const createToken = (id) => {
 
 exports.getUser = base.getOne(User);
 // exports.getAll = base.getAll(User);
-exports.update = base.updateOne(User);
 exports.delete = base.deleteOne(User);
+
+
+
+
 
 exports.getAll = async (req, res, next) => {
     try {
@@ -30,7 +46,7 @@ exports.getAll = async (req, res, next) => {
 
             let searchParams;
             if (req.query.search) {
-                searchParams = {name: { $regex: req.query.search, $options: 'i' }}
+                searchParams = { name: { $regex: req.query.search, $options: 'i' } }
             }
 
             const totalCount = await User.countDocuments(searchParams);
@@ -54,8 +70,23 @@ exports.getAll = async (req, res, next) => {
     }
 };
 
-// Admin user for role wise
-
+exports.updateUser = async (req, res, next) => {
+    try {
+        const { name, password, passwordConfirm, walletAmount, state, city, address, billingName, GSTNumber } = req.body;
+        const image = req.file ? `uploads/img/profile/${req.file.filename}` : null;
+        const edituser = await User.findByIdAndUpdate(req.params.id, {
+            state, city, address, billingName, GSTNumber, name, password, passwordConfirm, walletAmount,
+            profileImage: `${BASE_URL}/${image}`,
+        }, { new: true },
+        );
+        res.status(200).json({
+            edituser,
+        });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
 exports.getAdminUser = base.getOne(Admin);
 exports.getAllAdminUser = base.getAll(Admin);

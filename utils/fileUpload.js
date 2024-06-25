@@ -3,23 +3,25 @@ const path = require('path');
 
 exports.storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        if(file.fieldname === 'airport' || 'state' || 'city'){
+        if (file.fieldname === 'airport' || 'state' || 'city') {
             cb(null, './uploads/img/bulkUpload');
         }
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/gif') {
-            if(file.fieldname === 'rcBook'){
+            if (file.fieldname === 'rcBook') {
                 cb(null, './uploads/img/driverDetails/rcBook');
-            } else if(file.fieldname === 'licence'){
+            } else if (file.fieldname === 'licence') {
                 cb(null, './uploads/img/driverDetails/licence');
-            } else if(file.fieldname === 'insurance'){
+            } else if (file.fieldname === 'insurance') {
                 cb(null, './uploads/img/driverDetails/insurance');
-            } else if(file.fieldname === 'trip'){
+            } else if (file.fieldname === 'trip') {
                 cb(null, './uploads/img/trip');
+            } else if (file.fieldname === 'profile') {
+                cb(null, './uploads/img/profile');
             }
             else {
-            cb(null, './uploads/other');
+                cb(null, './uploads/other');
+            }
         }
-    }
     },
 
     filename: function (req, file, cb) {

@@ -52,7 +52,30 @@ const userSchema = new mongoose.Schema({
   walletAmount: {
     type: Number,
     default: 0
-  }
+  },
+  city: {
+    type: String,
+  },
+  state: {
+    type: String,
+  }, 
+  billingName: {
+    type: String,
+  },
+  GSTNumber: {
+    type: String,
+  },
+  profileImage: {
+    type: String,
+  },
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
 });
 
 userSchema.pre("save", async function (next) {

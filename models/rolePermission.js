@@ -16,7 +16,15 @@ const RolePermissionSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-}, { timestamps: true });
+  addedDate: {
+    type: Date,
+    required: false,
+  },
+  updatedDate: {
+    type: Date,
+    required: false,
+  },
+});
 
 const RolePermission = mongoose.model(
   "RolePermission",

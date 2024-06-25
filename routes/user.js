@@ -3,6 +3,10 @@ const router = express.Router();
 const userController = require("../controllers/user");
 const authController = require("../controllers/auth");
 const otpController = require("../controllers/otp");
+const { storage } = require('../utils/fileUpload');
+const multer = require('multer');
+const upload = multer({ storage: storage });
+const uploadImage = upload.single('profile');
 
 router.post("/login", authController.login);
 router.post("/signup", authController.signup);
@@ -25,7 +29,7 @@ router.post("/admin-user", userController.adminUser);
 
 // router.get('/users', userController.getAll);
 // router.get('/user/:id', userController.getUser);
-router.put('/user/edit/:id', userController.update);
+router.put('/user/edit/:id', uploadImage, userController.updateUser);
 router.delete('/user/delete/:id', userController.delete);
 
 
