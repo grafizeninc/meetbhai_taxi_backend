@@ -14,19 +14,20 @@ router.get("/airports", airportController.getAll);
 router.get("/airport/:id", airportController.getOne);
 
 // Destination Routes
-router.get("/destination", airportController.getDestination);
-router.post("/destination", airportController.addDestination);
+router.get("/available-airport", airportController.getAvailableAirportInDestination);
+router.post("/available-airport", airportController.addAvailableAirportInDestination);
+// router.post("/available-airport/:id", airportController.availbleAirportInDestination);
 router.get("/destination/:airport", airportController.getDestinationByAirport);
-router.get("/destination-airports", airportController.getDestinationAirports);
+router.get("/available-airports", airportController.getAvailbleAirportsInDestination);
 router.post("/destination/edit/:id", airportController.updateDestination);
 router.post("/destination/tags/:id", airportController.updateDestinationTags);
 
 // Destination Vehicle
 router.get("/destination-vehicle/:destination",airportController.getvehicleByDestination);
-router.post("/destination-vehicle", airportController.addDestinationVehicle);
-router.post("/destination-vehicle/edit/:id",airportController.updateDestination);
+router.post("/destination", airportController.addDestination);
+// router.post("/destination-vehicle/edit/:id",airportController.updateDestination);
 router.get("/airport-destination-vehicle",airportController.getvehicleListByAirportDestination);
-router.get("/all-destination-vehicle", airportController.getAllDestinationVehicle);
+router.get("/all-destination", airportController.getAllDestination);
 
 
 // Only admin have permission to access for the below APIs
@@ -37,6 +38,6 @@ router.post("/airport", airportController.add);
 router.delete("/airport/:id", airportController.delete);
 router.post("/airport-bulk-upload", uploadImage, airportController.handleAirportUpload);
 
-router.delete("/destination-vehicle/:id", airportController.deleteDestinationVehicle);
+router.delete("/destination/:id", airportController.deleteDestination);
 
 module.exports = router;

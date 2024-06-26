@@ -14,6 +14,11 @@ const airportSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill Airport City"],
   },
+  destinationActive: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
   fileType: {
     type: String,
   },

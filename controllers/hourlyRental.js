@@ -30,8 +30,12 @@ exports.getVehicleListByHourlyRentalPackage = async (req, res, next) => {
   try {
     const hourlyRentalData = await hourlyRentalModel.findOne({
       _id: req.query.packageId,
-      cityId: req.query.cityId,
+      cityId: req.query.cityId, 
     }).lean();
+
+    if (!hourlyRentalData || !Array.isArray(hourlyRentalData.vehicles)) {
+      return res.status(400).json({ status: "Fail", message: "HourlyRental Package not found... " })
+    }
 
     for (const h of hourlyRentalData?.vehicles) {
       h.categoryId = await Vehicle.findById(ObjectId(h.categoryId));

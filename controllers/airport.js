@@ -1,7 +1,7 @@
 const base = require("./base");
 const Airport = require("../models/airport");
+const AvailableAirportInDestination = require("../models/availableAirportInDestination");
 const Destination = require("../models/destination");
-const DestinationVehicle = require("../models/destinationVehicle");
 const VehicleModel = require("../models/vehicleModel");
 const AppError = require("../utils/appError");
 const Vehicle = require("../models/vehicle");
@@ -37,9 +37,9 @@ exports.add = async (req, res, next) => {
 
 // Destination
 
-exports.addDestination = async (req, res, next) => {
+exports.addAvailableAirportInDestination = async (req, res, next) => {
   try {
-    const airport = await Airport.findById(req.body.airport);
+    const airport = await Airport.findById(req.body.airportId);
     if (!airport) {
       return next(
         new AppError(401, "fail", "No Airport found with that id"),
@@ -49,7 +49,7 @@ exports.addDestination = async (req, res, next) => {
       );
     }
 
-    const checkDestinationAirportExist = await Destination.find({ airportId: req.body.airport }).lean();
+    const checkDestinationAirportExist = await AvailableAirportInDestination.find({ airportId: req.body.airport }).lean();
     if (!checkDestinationAirportExist) {
       return next(
         new AppError(401, "fail", "Airport already exist"),
@@ -58,17 +58,18 @@ exports.addDestination = async (req, res, next) => {
         next
       );
     }
-
+    airport.destinationActive = true;
+    await airport.save();
     await req.body;
-    const destination = await Destination.create({
-      airportId: req.body.airport,
+    const availableAirport = await AvailableAirportInDestination.create({
+      airportId: req.body.airportId,
       addedDate: new Date(),
     });
 
     res.status(201).json({
       status: "success",
       data: {
-        destination,
+        availableAirport,
       },
     });
   } catch (err) {
@@ -76,12 +77,12 @@ exports.addDestination = async (req, res, next) => {
   }
 };
 
-exports.updateDestination = base.updateOne(Destination);
+// exports.updateDestination = base.updateOne(Destination);
 exports.updateDestinationTags = async (req, res, next) => {
   try {
     let tags = req.body.tags;
     let tagsData = tags ? tags.split(",").map(tag => tag.trim()) : [];
-    const doc = await DestinationVehicle.findByIdAndUpdate(
+    const doc = await Destination.findByIdAndUpdate(
       req.params.id,
       {
         tags: tagsData,
@@ -112,26 +113,15 @@ exports.updateDestinationTags = async (req, res, next) => {
   }
 };
 
-exports.getDestinationByAirport = async (req, res, next) => {
-  try {
-    const destinationList = await DestinationVehicle.find({ destinationAirportId: req.params.airport }).populate('vehicles.categoryId');;
 
-    res.status(200).json({
-      status: "success",
-      destinationList,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
 
-exports.getDestination = async (req, res, next) => {
+exports.getAvailableAirportInDestination = async (req, res, next) => {
   try {
     const airports = await Airport.find();
 
     const airportDestinationCount = await Promise.all(
       airports.map(async (airport) => {
-        const destinationCount = await Destination.countDocuments({
+        const destinationCount = await AvailableAirportInDestination.countDocuments({
           airportId: airport._id,
         });
         return {
@@ -150,9 +140,9 @@ exports.getDestination = async (req, res, next) => {
   }
 };
 
-exports.getDestinationAirports = async (req, res, next) => {
+exports.getAvailbleAirportsInDestination = async (req, res, next) => {
   try {
-    const destinations = await Destination.find();
+    const destinations = await AvailableAirportInDestination.find();
 
     const ids = destinations.map(item => item.airportId);
 
@@ -169,13 +159,24 @@ exports.getDestinationAirports = async (req, res, next) => {
 
 // Destination Vehicles
 
-exports.getAllDestinationVehicle = base.getAll(DestinationVehicle);
-exports.getOneDestinationVehicle = base.getOne(DestinationVehicle);
-exports.updateDestinationVehicle = base.updateOne(DestinationVehicle);
-exports.deleteDestinationVehicle = base.deleteOne(DestinationVehicle);
+exports.getAllDestination = base.getAll(Destination);
+exports.updateDestination = base.updateOne(Destination);
+exports.deleteDestination = base.deleteOne(Destination);
+exports.getDestinationByAirport = async (req, res, next) => {
+  try {
+    const destinationList = await Destination.find({ airportId: req.params.airport }).populate('vehicles.categoryId');;
+
+    res.status(200).json({
+      status: "success",
+      destinationList,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 exports.getvehicleByDestination = async (req, res, next) => {
   try {
-    const destination = await DestinationVehicle.find({
+    const destination = await Destination.find({
       destinationId: req.params.destination,
     });
 
@@ -211,9 +212,9 @@ exports.getvehicleByDestination = async (req, res, next) => {
     next(err);
   }
 };
-exports.addDestinationVehicle = async (req, res, next) => {
+exports.addDestination = async (req, res, next) => {
   try {
-    const destinationVehicle = await DestinationVehicle.create({
+    const destinationVehicle = await Destination.create({
       ...req.body,
       addedDate: new Date(),
     });
@@ -231,7 +232,7 @@ exports.addDestinationVehicle = async (req, res, next) => {
 
 exports.getvehicleListByAirportDestination = async (req, res, next) => {
   try {
-    const destination = await DestinationVehicle.findOne({
+    const destination = await Destination.findOne({
       _id: req.query.destinationId,
     }).lean();
     if (!destination || !Array.isArray(destination.vehicles)) {

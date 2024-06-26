@@ -1,7 +1,7 @@
 const Booking = require("../models/booking");
 const User = require("../models/user");
 const Airport = require("../models/airport");
-const DestinationVehicle = require("../models/destinationVehicle");
+const DestinationVehicle = require("../models/destination");
 const Vehicle = require("../models/vehicle");
 const VehicleModel = require("../models/vehicleModel");
 const City = require("../models/city");
@@ -113,7 +113,7 @@ exports.getBookingReceipt = async (req, res, next) => {
     const airportBooking = await AirportBooking.findById(bookingId).populate("user airportId destinationVehicleId categoryId");
     if (airportBooking) {
       data.vehicleDetail = await VehicleModel.findOne({category: airportBooking.categoryId});
-      data.airport = await Airport.findById(airportBooking.airportId.airportId);
+      data.airport = await Airport.findById(airportBooking.airportId);
       data.user = airportBooking.user;
       data.categoryName = airportBooking.categoryId.categoryName;
       data.destinationVehicle = airportBooking.destinationVehicleId;

@@ -45,6 +45,9 @@ exports.getVehicleListByLocalAirportPackage = async (req, res, next) => {
       cityId: req.query.cityId,
     }).lean();
 
+    if (!packageData || !Array.isArray(packageData.vehicles)) {
+      return res.status(400).json({ status: "Fail", message: "Local Package not found... " })
+    }
     for (const h of packageData?.vehicles) {
       h.categoryId = await Vehicle.findById(ObjectId(h.categoryId));
     }
