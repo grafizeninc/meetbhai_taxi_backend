@@ -4,7 +4,41 @@ const Vehicle = require("../models/vehicle");
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-exports.getAll = base.getAll(hourlyRentalModel);
+// exports.getAll = base.getAll(hourlyRentalModel);
+exports.getAll = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await hourlyRentalModel.countDocuments(searchParams);
+      const data = await hourlyRentalModel.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await hourlyRentalModel.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOne = base.getOne(hourlyRentalModel);
 exports.update = base.updateOne(hourlyRentalModel);
 exports.delete = base.deleteOne(hourlyRentalModel);

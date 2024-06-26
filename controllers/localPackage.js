@@ -4,7 +4,41 @@ const ObjectId = mongoose.Types.ObjectId;
 const localPackageModel = require("../models/localHourlyPackages");
 const Vehicle = require("../models/vehicle");
 
-exports.getAll = base.getAll(localPackageModel);
+// exports.getAll = base.getAll(localPackageModel);
+exports.getAll = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await localPackageModel.countDocuments(searchParams);
+      const data = await localPackageModel.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await localPackageModel.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOne = base.getOne(localPackageModel);
 exports.update = base.updateOne(localPackageModel);
 exports.delete = base.deleteOne(localPackageModel);

@@ -11,10 +11,45 @@ const csv = require('csvtojson');
 const xlsx = require('xlsx');
 const path = require('path');
 
-exports.getAll = base.getAll(Airport);
+// exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
 exports.update = base.updateOne(Airport);
 exports.delete = base.deleteOne(Airport);
+
+exports.getAll = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await Airport.countDocuments(searchParams);
+      const data = await Airport.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await Airport.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.add = async (req, res, next) => {
   try {
     const airport = await Airport.create({
@@ -159,7 +194,41 @@ exports.getAvailbleAirportsInDestination = async (req, res, next) => {
 
 // Destination Vehicles
 
-exports.getAllDestination = base.getAll(Destination);
+// exports.getAllDestination = base.getAll(Destination);
+exports.getAllDestination = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await Destination.countDocuments(searchParams);
+      const data = await Destination.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await Destination.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.updateDestination = base.updateOne(Destination);
 exports.deleteDestination = base.deleteOne(Destination);
 exports.getDestinationByAirport = async (req, res, next) => {

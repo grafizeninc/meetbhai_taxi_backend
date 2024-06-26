@@ -6,7 +6,41 @@ const path = require('path');
 const csv = require('csvtojson');
 const xlsx = require('xlsx');
 
-exports.getAllState = base.getAll(State);
+// exports.getAllState = base.getAll(State);
+exports.getAllState = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await State.countDocuments(searchParams);
+      const data = await State.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await State.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOneState = base.getOne(State);
 exports.updateState = base.updateOne(State);
 exports.deleteState = base.deleteOne(State);
@@ -29,7 +63,41 @@ exports.addState = async (req, res, next) => {
   }
 };
 
-exports.getAllCity = base.getAll(City);
+// exports.getAllCity = base.getAll(City);
+exports.getAllCity = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams;
+      if (req.query.search) {
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await City.countDocuments(searchParams);
+      const data = await City.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    const data = await City.find({});
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOneCity = base.getOne(City);
 exports.updateCity = base.updateOne(City);
 exports.deleteCity = base.deleteOne(City);
