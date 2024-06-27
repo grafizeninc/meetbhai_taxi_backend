@@ -37,6 +37,7 @@ router.post("/airport/:id", airportController.update);
 router.post("/airport", airportController.add);
 router.delete("/airport/:id", airportController.delete);
 router.post("/airport-bulk-upload", uploadImage, airportController.handleAirportUpload);
+router.get("/airport-download", airportController.downloadAirportFile);
 
 router.delete("/destination/:id", airportController.deleteDestination);
 

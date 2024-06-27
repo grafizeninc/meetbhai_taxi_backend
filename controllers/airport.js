@@ -9,6 +9,8 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 const csv = require('csvtojson');
 const xlsx = require('xlsx');
+const csvWriter = require('csv-writer');
+// const pdfMake = require('pdf-make');
 const path = require('path');
 
 // exports.getAll = base.getAll(Airport);
@@ -354,6 +356,7 @@ const processExcel = (filePath) => {
   });
   return worksheet;
 };
+
 exports.handleAirportUpload = async (req, res) => {
   try {
     const filePath = req.file.path;
@@ -372,3 +375,91 @@ exports.handleAirportUpload = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.downloadAirportFile = async (req, res) => {
+  const fileType = req.body.fileType;
+
+  if (!fileType) {
+    return res.status(400).send({ message: 'File type is required' });
+  }
+
+  let airports = [];
+  if (req.body.page && req.body.limit) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    airports = await Airport.find({}).skip(skip).limit(limit);
+  } else {
+    airports = await Airport.find().lean();
+  }
+
+  try {
+    switch (fileType) {
+      case 'excel':
+        const workbook = xlsx.utils.book_new();
+        const airportsData = [['Name']];
+
+        airports.forEach((airport) => {
+          airportsData.push([airport.name]);
+        });
+
+        const worksheet = xlsx.utils.aoa_to_sheet(airportsData);
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Airports');
+
+        const buffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+        res.setHeader('Content-Disposition', `attachment; filename="airports.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(buffer);
+        break;
+      case 'csv':
+        // create a CSV file
+        const csvData = [];
+        airports.forEach((item) => {
+          csvData.push({
+            'Name': item.name
+          });
+        });
+        const csvWriterInstance = csvWriter.createObjectCsvWriter({
+          path: './airports.csv',
+          header: [
+            { id: 'name', title: 'Name' }
+          ],
+        });
+        csvWriterInstance.writeRecords(csvData).then(() => {
+          res.setHeader('Content-Disposition', `attachment; filename="airports.csv"`);
+          res.setHeader('Content-Type', 'text/csv');
+          res.sendFile('./airports.csv');
+        });
+        break;
+      case 'pdf':
+        // create a PDF file
+        const pdfDoc = new pdfMake.PdfDocument();
+        const pdfTable = {
+          table: {
+            body: [
+              [
+                { text: 'Name', fontSize: 12, bold: true },
+              ],
+            ],
+          },
+        };
+        airports.forEach((item) => {
+          pdfTable.table.body.push([
+            { text: item.name, fontSize: 12 }
+          ]);
+        });
+        pdfDoc.add(pdfTable);
+        const pdfStream = pdfDoc.pipe(res);
+        pdfStream.on('finish', () => {
+          res.setHeader('Content-Disposition', `attachment; filename="airports.pdf"`);
+          res.setHeader('Content-Type', 'application/pdf');
+        });
+        break;
+      default:
+        res.status(400).send({ message: 'Invalid file type' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Error generating file' });
+  }
+}

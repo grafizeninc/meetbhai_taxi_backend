@@ -12,6 +12,7 @@
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "csv-writer": "^1.6.0",
     "csvtojson": "^2.0.10",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -25,5 +26,8 @@
     "validator": "^12.0.0",
     "xlsx": "^0.18.5",
     "xss-clean": "^0.1.1"
+  },
+  "devDependencies": {
+    "pdfmake": "^0.2.10"
   }
 }
