@@ -126,7 +126,7 @@ exports.getBookingReceipt = async (req, res, next) => {
       data.package = localAirportBooking.packageId;
       data.city = localAirportBooking.cityId;
       data.categoryName = localAirportBooking.categoryId.categoryName;
-      data.vehicleDetail = await VehicleModel.findOne({category: airportBooking.categoryId});
+      data.vehicleDetail = await VehicleModel.findOne({category: localAirportBooking.categoryId});
     }
 
     const hourlyRentalBooking = await HourlyRentalBooking.findById(bookingId).populate("user packageId cityId categoryId")
