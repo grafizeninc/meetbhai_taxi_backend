@@ -59,6 +59,18 @@ exports.add = async (req, res, next) => {
     next(err);
   }
 };
+exports.getHourlyPackagesByCity = async (req, res, next) => {
+  try {
+    const hourlyRentalList = await hourlyRentalModel.find({ cityId: req.params.city }).populate('vehicles.categoryId'); ;
+
+    res.status(200).json({
+      status: "success",
+      hourlyRentalList,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 exports.getVehicleListByHourlyRentalPackage = async (req, res, next) => {
   try {

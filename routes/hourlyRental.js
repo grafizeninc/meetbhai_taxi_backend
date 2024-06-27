@@ -8,6 +8,7 @@ router.use(authController.protect);
 
 router.get("/hourlyRentals", hourlyRentalController.getAll);
 router.get("/hourlyRental/:id", hourlyRentalController.getOne);
+router.get("/hourlyPackage/:city", hourlyRentalController.getHourlyPackagesByCity);
 
 // Only admin have permission to access for the below APIs
 // router.use(authController.restrictTo("admin"));
