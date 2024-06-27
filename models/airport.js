@@ -34,7 +34,7 @@ const airportSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 const Airport = mongoose.model("Airport", airportSchema);
 module.exports = Airport;

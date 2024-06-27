@@ -59,7 +59,7 @@ const DestinationSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 const Destination = mongoose.model(
   "Destination",

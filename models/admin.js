@@ -48,7 +48,7 @@ const adminSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {

@@ -22,7 +22,7 @@ const vehicleSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 const Vehicle = mongoose.model("Vehicle", vehicleSchema);
 module.exports = Vehicle;

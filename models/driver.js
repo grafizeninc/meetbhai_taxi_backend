@@ -30,7 +30,7 @@ const driverSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-});
+}, { timestamps: true });
 
 const Driver = mongoose.model("Driver", driverSchema);
 module.exports = Driver;

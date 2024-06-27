@@ -11,7 +11,7 @@ const destinationSchema = new mongoose.Schema({
     select: false,
   },
 
-});
+}, { timestamps: true });
 
 const Destination = mongoose.model("Destination", destinationSchema);
 module.exports = Destination;

@@ -24,6 +24,6 @@ const faqSchema = new mongoose.Schema({
         type: Date,
         required: false,
     },
-});
+}, { timestamps: true });
 const FAQ = mongoose.model("FAQ", faqSchema);
 module.exports = FAQ;

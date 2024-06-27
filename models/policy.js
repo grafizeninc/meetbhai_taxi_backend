@@ -22,7 +22,7 @@ const policySchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-});
+}, { timestamps: true });
 
 const Policy = mongoose.model("Policy", policySchema);
 module.exports = Policy;

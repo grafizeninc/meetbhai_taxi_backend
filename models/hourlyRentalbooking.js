@@ -56,7 +56,7 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-});
+}, { timestamps: true });
 
 const Booking = mongoose.model("HourlyRentalBooking", bookingSchema);
 module.exports = Booking;

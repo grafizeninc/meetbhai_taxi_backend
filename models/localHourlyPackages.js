@@ -61,7 +61,7 @@ const LocalPackagesSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 const LocalPackages = mongoose.model(
   "LocalPackages",

@@ -23,6 +23,6 @@ const tripSchema = new mongoose.Schema({
         type: Date,
         required: false,
     },
-});
+}, { timestamps: true });
 const Trip = mongoose.model("Trip", tripSchema);
 module.exports = Trip;

@@ -45,7 +45,7 @@ const OutStationSchema = new mongoose.Schema({
         type: Date,
         required: false,
     },
-});
+}, { timestamps: true });
 
 const OutStation = mongoose.model("OutStation", OutStationSchema);
 module.exports = OutStation;

@@ -40,7 +40,7 @@ const availableAirportInDestinationSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
-});
+}, { timestamps: true });
 
 const AvailableAirportInDestination = mongoose.model("AvailableAirportInDestination", availableAirportInDestinationSchema );
 module.exports = AvailableAirportInDestination;

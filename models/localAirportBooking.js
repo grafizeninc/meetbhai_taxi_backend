@@ -57,7 +57,7 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-});
+}, { timestamps: true });
 
 const Booking = mongoose.model("LocalAirportBooking", bookingSchema);
 module.exports = Booking;

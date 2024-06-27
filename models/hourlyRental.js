@@ -52,7 +52,7 @@ const hourlyRentalSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-});
+}, { timestamps: true });
 
 const hourlyRentals = mongoose.model(
   "HourlyRental",

@@ -53,7 +53,7 @@ const bookingSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-}); 
+}, { timestamps: true });
 
 const AirportBooking = mongoose.model("AirportBooking", bookingSchema);
 module.exports = AirportBooking;
