@@ -76,6 +76,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
+  verifiedUser: {
+    type: Boolean,
+    default: false,
+    required: false,
+  },
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

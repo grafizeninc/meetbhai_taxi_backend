@@ -13,7 +13,7 @@ router.delete("/local-airport-booking/:id", bookingController.deleteBooking);
 // router.use(authController.restrictTo("admin"));
 
 router.get("/local-airport-bookings", bookingController.getBookingList);
-router.post("/local-airport-booking/accept/:id", bookingController.acceptBooking);
+router.post("/local-airport-booking/cancel/:id", bookingController.cancelBooking);
 router.post("/local-airport-booking/assign/:id", bookingController.assignDriver);
 
 module.exports = router;

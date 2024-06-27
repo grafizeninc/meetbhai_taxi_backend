@@ -13,7 +13,7 @@ router.delete("/hourly-rental-booking/:id", bookingController.deleteBooking);
 // router.use(authController.restrictTo("admin"));
 
 router.get("/hourly-rental-bookings", bookingController.getBookingList);
-router.post("/hourly-rental-booking/accept/:id", bookingController.acceptBooking);
+router.post("/hourly-rental-booking/cancel/:id", bookingController.cancelBooking);
 router.post("/hourly-rental-booking/assign/:id", bookingController.assignDriver);
 
 module.exports = router;

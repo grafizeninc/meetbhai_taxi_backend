@@ -44,15 +44,18 @@ exports.verifyOtp = async (req, res) => {
   const { phone, otp } = req.body;
   try {
     const existingOtpData = await Otp.findOne({ phone, otp });
+    
     if (!existingOtpData) {
       return res.status(404).json({ status: 404, message: "OTP not found for the given phone number" });
     }
     if (existingOtpData) {
       await existingOtpData.remove()
       return res.status(200).json({ status: 200, message: "OTP verification successful" });
+
     } else {
       return res.status(400).json({ status: 400, message: "Incorrect OTP" });
     }
+
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ status: 500, message: "Internal error", data: null });

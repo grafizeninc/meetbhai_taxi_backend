@@ -7,7 +7,7 @@ const bookingSchema = new mongoose.Schema({
   },
   airportId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "AvailableAirportInDestination",
+    ref: "Airport",
     required: [true, "Please fill  Airport"],
   },
   destinationId: {
@@ -36,7 +36,7 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "assigned", "completed", "cancelled"],
     default: "pending",
   },
-  selectedVehicleId: {
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
     required: [true, "Please fill Vehicle Category"],

@@ -5,7 +5,8 @@ const airportController = require("../controllers/airport");
 const {storage} = require('../utils/fileUpload');
 const multer = require('multer');
 const upload = multer({storage: storage});
-const uploadImage = upload.single('airport');
+const uploadAirportFile = upload.single('airport');
+const uploadDestinationFile = upload.single('destination');
 
 // Protect all routes after this middleware
 router.use(authController.protect);
@@ -36,7 +37,8 @@ router.get("/all-destination", airportController.getAllDestination);
 router.post("/airport/:id", airportController.update);
 router.post("/airport", airportController.add);
 router.delete("/airport/:id", airportController.delete);
-router.post("/airport-bulk-upload", uploadImage, airportController.handleAirportUpload);
+router.post("/airport-bulk-upload", uploadAirportFile, airportController.handleAirportUpload);
+router.post("/destination-bulk-upload", uploadDestinationFile, airportController.handleDestinationUpload);
 router.get("/airport-download", airportController.downloadAirportFile);
 
 router.delete("/destination/:id", airportController.deleteDestination);

@@ -37,7 +37,7 @@ const bookingSchema = new mongoose.Schema({
     enum: ["pending", "accepted", "assigned", "completed", "cancelled"],
     default: "pending",
   },
-  selectedVehicleId: {
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
     required: [true, "Please fill Vehicle Category"],

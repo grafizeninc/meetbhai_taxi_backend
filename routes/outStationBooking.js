@@ -13,7 +13,7 @@ router.delete("/out-station-booking/:id", bookingController.deleteBooking);
 // router.use(authController.restrictTo("admin"));
 
 router.get("/out-station-bookings", bookingController.getBookingList);
-router.post("/out-station-booking/accept/:id", bookingController.acceptBooking);
+router.post("/out-station-booking/cancel/:id", bookingController.cancelBooking);
 router.post("/out-station-booking/assign/:id", bookingController.assignDriver);
 
 module.exports = router;

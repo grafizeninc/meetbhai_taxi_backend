@@ -169,15 +169,40 @@ exports.handleStateUpload = async (req, res) => {
   }
 };
 
+
+const processCityCSV = async (filePath, id) => {
+  const jsonArray = await csv().fromFile(filePath);
+  const currentDate = new Date();
+  jsonArray.forEach(item => {
+    item.addedDate = currentDate;
+    item.state_id = id;
+    item.fileType = 'csv'; 
+  });
+  return jsonArray;
+}
+const processCityExcel = async (filePath, id) => {
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const currentDate = new Date();
+  worksheet.forEach(item => {
+    item.addedDate = currentDate;
+    item.state_id = id;
+    item.fileType = 'excel';
+  });
+  return worksheet;
+};
+
 exports.handleCityUpload = async (req, res) => {
   try {
+    const state_id = req.body.state_id;
     const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     let jsonArray;
     if (ext === '.csv') {
-      jsonArray = await processCSV(filePath);
+      jsonArray = await processCityCSV(filePath, state_id);
     } else if (ext === '.xlsx' || ext === '.xls') {
-      jsonArray = processExcel(filePath);
+      jsonArray = processCityExcel(filePath, state_id);
     } else {
       return res.status(400).json({ error: 'Unsupported file format' });
     }

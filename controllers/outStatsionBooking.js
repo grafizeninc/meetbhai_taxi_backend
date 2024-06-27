@@ -43,20 +43,32 @@ exports.getBookingsByUserId = async (req, res, next) => {
   }
 };
 
-exports.acceptBooking = async (req, res, next) => {
-  try {
-    if (!req.body.status) {
-      return res.status(400).json({ status: "fail", message: "Status is required... " })
-    }
-    const booking = await Booking.findById(req.params.id);
-    booking.status = req.body.status;
+// exports.acceptBooking = async (req, res, next) => {
+//   try {
+//     if (!req.body.status) {
+//       return res.status(400).json({ status: "fail", message: "Status is required... " })
+//     }
+//     const booking = await Booking.findById(req.params.id);
+//     booking.status = req.body.status;
 
+//     await booking.save();
+//     res.status(200).json({
+//       status: "success",
+//       data: booking,
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
+exports.cancelBooking = async (req, res, next) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    booking.status = "cancelled";
     await booking.save();
-    res.status(200).json({
-      status: "success",
-      data: booking,
-    });
-  } catch (err) {
+    res.status(200).json(" Booking Cancle Successfully ");
+  }
+  catch(err) {
     next(err);
   }
 };

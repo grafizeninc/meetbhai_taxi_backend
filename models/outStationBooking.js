@@ -42,7 +42,7 @@ const bookingSchema = new mongoose.Schema({
     // enum: ["one-way", "round"],
     required: [true, "Please fill sub type"],
   },
-  selectedVehicleId: {
+  categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Vehicle",
     required: [true, "Please fill Vehicle Category"],

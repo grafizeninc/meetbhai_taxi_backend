@@ -1,7 +1,7 @@
 const Booking = require("../models/booking");
 const User = require("../models/user");
 const Airport = require("../models/airport");
-const DestinationVehicle = require("../models/destination");
+const Destination = require("../models/destination");
 const Vehicle = require("../models/vehicle");
 const VehicleModel = require("../models/vehicleModel");
 const City = require("../models/city");
@@ -46,7 +46,7 @@ exports.getBookingSummery = async (req, res, next) => {
     const categoryId = req.query.categoryId;
 
     // airport
-    const destinationVehicleId = req.query.destinationVehicleId;
+    const destinationId = req.query.destinationId;
     const airportId = req.query.airportId;
 
     // local airport package & hourly rental
@@ -62,16 +62,16 @@ exports.getBookingSummery = async (req, res, next) => {
       finalData.category = await Vehicle.findById(categoryId);
 
       if (finalData.category) {
-        finalData.vehicleDetail = await VehicleModel.findOne({category: categoryId});
+        finalData.vehicleDetail = await VehicleModel.findOne({category: finalData.category});
       }
     }
 
-    if (destinationVehicleId) {
-      finalData.destinationVehicle = await DestinationVehicle.findById(destinationVehicleId);
+    if (destinationId) {
+      finalData.destination = await Destination.findById(destinationId);
     }
 
     if (airportId) {
-      finalData.airport = await Airport.findById(destinationVehicleId);
+      finalData.airport = await Airport.findById(airportId);
     }
 
     if (cityId) {
@@ -110,13 +110,14 @@ exports.getBookingReceipt = async (req, res, next) => {
     data.paymentStatus = '';
     data.gstNumber = '';
 
-    const airportBooking = await AirportBooking.findById(bookingId).populate("user airportId destinationVehicleId categoryId");
+    const airportBooking = await AirportBooking.findById(bookingId).populate("user airportId destinationId categoryId");
     if (airportBooking) {
       data.vehicleDetail = await VehicleModel.findOne({category: airportBooking.categoryId});
       data.airport = await Airport.findById(airportBooking.airportId);
+      // data.airport = airportBooking.airportId;
       data.user = airportBooking.user;
       data.categoryName = airportBooking.categoryId.categoryName;
-      data.destinationVehicle = airportBooking.destinationVehicleId;
+      data.destination = airportBooking.destinationId;
     }
 
     const localAirportBooking = await LocalAirportBooking.findById(bookingId).populate("user packageId cityId categoryId")

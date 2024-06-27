@@ -1,11 +1,17 @@
-const express = require('express')
+const express = require("express");
 const router = express.Router();
-const faqController = require('../controllers/faq');
-const authController = require('../controllers/auth');
+const authController = require("../controllers/auth");
+const faqController = require("../controllers/faq");
+
+// Protect all routes after this middleware
 router.use(authController.protect);
-// router.get('/faq/:id', faqController.getOne);
-router.get('/faqs', faqController.getAll);
-router.post('/faq', faqController.add);
-router.post('/faq/edit/:id', faqController.update);
-router.delete('/faq/:id', faqController.delete);
+router.get("/faqs", faqController.getAll);
+
+// Only admin have permission to access for the below APIs
+
+// router.use(authController.restrictTo("admin"));
+router.post("/faq", faqController.add);
+router.post("/faq/:id", faqController.update);
+router.delete("/faq/:id", faqController.delete);
+
 module.exports = router;

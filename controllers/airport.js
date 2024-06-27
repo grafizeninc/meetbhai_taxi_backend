@@ -376,6 +376,50 @@ exports.handleAirportUpload = async (req, res) => {
   }
 };
 
+
+const processDestinationCSV = async (filePath, id) => {
+  const jsonArray = await csv().fromFile(filePath);
+  const currentDate = new Date();
+  jsonArray.forEach(item => {
+    item.addedDate = currentDate;
+    item.availableAirportInDestinationId = id;
+    item.fileType = 'csv'; 
+  });
+  return jsonArray;
+}
+const processDestinationExcel = async (filePath, id) => {
+  const workbook = xlsx.readFile(filePath);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+  const currentDate = new Date();
+  worksheet.forEach(item => {
+    item.addedDate = currentDate;
+    item.availableAirportInDestinationId = id;
+    item.fileType = 'excel';
+  });
+  return worksheet;
+};
+
+exports.handleDestinationUpload = async (req, res) => {
+  try {
+    const availableAirportInDestinationId = req.body.availableAirportInDestinationId;
+    const filePath = req.file.path;
+    const ext = path.extname(req.file.originalname).toLowerCase();
+    let jsonArray;
+    if (ext === '.csv') {
+      jsonArray = await processDestinationCSV(filePath, availableAirportInDestinationId);
+    } else if (ext === '.xlsx' || ext === '.xls') {
+      jsonArray = processDestinationExcel(filePath, availableAirportInDestinationId);
+    } else {
+      return res.status(400).json({ error: 'Unsupported file format' });
+    }
+    const savedFiles = await Destination.insertMany(jsonArray);
+    res.json({ files: savedFiles });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.downloadAirportFile = async (req, res) => {
   const fileType = req.body.fileType;
 
