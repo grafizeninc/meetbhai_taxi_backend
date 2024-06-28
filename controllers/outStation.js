@@ -12,13 +12,13 @@ exports.getAll = async (req, res, next) => {
             const limit = parseInt(req.query.limit) || 10;
             const skip = (page - 1) * limit;
 
-            let searchParams;
-            if (req.query.search) {
-                searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+            let searchParams = {};
+            if (req.query.search && req.query.search.trim() !== '') {
+                searchParams = { 'stateId.name': { $regex: req.query.search, $options: 'i' } };
             }
 
             const totalCount = await OutStation.countDocuments(searchParams);
-            const data = await OutStation.find(searchParams).skip(skip).limit(limit);
+            const data = await OutStation.find(searchParams).skip(skip).limit(limit).populate('stateId');
 
             return res.status(200).json({
                 status: 'success',
@@ -29,7 +29,12 @@ exports.getAll = async (req, res, next) => {
             });
         }
 
-        const data = await OutStation.find({});
+        let searchParams = {};
+        if (req.query.search) {
+            searchParams = { 'stateId.name': { $regex: req.query.search, $options: 'i' }}
+        }
+
+        const data = await OutStation.find(searchParams).populate('stateId');
         res.status(200).json({
             status: 'success',
             data

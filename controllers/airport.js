@@ -42,7 +42,11 @@ exports.getAll = async (req, res, next) => {
       });
     }
 
-    const data = await Airport.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+    }
+    const data = await Airport.find(searchParams);
     res.status(200).json({
       status: 'success',
       data

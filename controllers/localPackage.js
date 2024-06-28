@@ -14,7 +14,7 @@ exports.getAll = async (req, res, next) => {
 
       let searchParams;
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = { packageName: { $regex: req.query.search, $options: 'i' }}
       }
 
       const totalCount = await localPackageModel.countDocuments(searchParams);
@@ -29,7 +29,12 @@ exports.getAll = async (req, res, next) => {
       });
     }
 
-    const data = await localPackageModel.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { packageName: { $regex: req.query.search, $options: 'i' }}
+    }
+
+    const data = await localPackageModel.find(searchParams);
     res.status(200).json({
       status: 'success',
       data
