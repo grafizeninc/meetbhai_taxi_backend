@@ -31,6 +31,7 @@ router.post("/admin-user", userController.adminUser);
 // router.get('/user/:id', userController.getUser);
 router.put('/user/edit/:id', uploadImage, userController.updateUser);
 router.delete('/user/delete/:id', userController.delete);
+router.get("/user-download", userController.downloadUserFile);
 
 
 

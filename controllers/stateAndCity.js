@@ -5,6 +5,8 @@ const AppError = require("../utils/appError");
 const path = require('path');
 const csv = require('csvtojson');
 const xlsx = require('xlsx');
+const csvWriter = require('csv-writer');
+const pdfMake = require('pdfmake');
 
 // exports.getAllState = base.getAll(State);
 exports.getAllState = async (req, res, next) => {
@@ -222,3 +224,117 @@ exports.handleCityUpload = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.downloadStateFile = async (req, res) => {
+  const fileType = req.body.fileType;
+
+  if (!fileType) {
+    return res.status(400).send({ message: 'File type is required' });
+  }
+
+  let states = [];
+  if (req.body.page && req.body.limit) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    states = await State.find({}).skip(skip).limit(limit);
+  } else {
+    states = await State.find().lean();
+  }
+
+  try {
+    switch (fileType) {
+      case 'excel':
+        const workbook = xlsx.utils.book_new();
+        const statesData = [['Name']];
+
+        states.forEach((state) => {
+          statesData.push([state.name]);
+        });
+
+        const worksheet = xlsx.utils.aoa_to_sheet(statesData);
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'States');
+
+        const buffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+        res.setHeader('Content-Disposition', `attachment; filename="states.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(buffer);
+        break;
+      case 'csv':
+        // create a CSV file
+        const csvData = states.map(state => ({
+          name: state.name
+        }));
+        const filePath = path.join(__dirname, './state.csv')
+        const csvWriterInstance = csvWriter.createObjectCsvWriter({
+          path: filePath,
+          header: [
+            { id: 'name', title: 'Name' }
+          ],
+        });
+        csvWriterInstance.writeRecords(csvData).then(() => {
+          res.setHeader('Content-Disposition', `attachment; filename="states.csv"`);
+          res.setHeader('Content-Type', 'text/csv');
+          res.sendFile(filePath, (err) => {
+            if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).send('Internal Server Error');
+            } else {
+              console.log('File sent successfully');
+            }
+          });
+        });
+        break;
+      case 'pdf':
+        // create a PDF file
+        const fonts = {
+          Roboto: {
+            normal: 'Helvetica',
+            bold: 'Helvetica-Bold',
+            italics: 'Helvetica-Oblique',
+            bolditalics: 'Helvetica-BoldOblique',
+          },
+        };
+    
+        const printer = new pdfMake(fonts);
+    
+        const docDefinition = {
+          content: [
+            { text: 'States Report', style: 'header' },
+            {
+              table: {
+                headerRows: 1,
+                widths: ['*', '*', '*'],
+                body: [
+                  ['Name'],
+                  ...states.map(state => [state.name])
+                ],
+              },
+            },
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+              margin: [0, 0, 0, 10],
+            },
+          },
+        };
+    
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
+        pdfDoc.pipe(res);
+        pdfDoc.end();
+    
+        res.setHeader('Content-Disposition', 'attachment; filename="statets.pdf"');
+        res.setHeader('Content-Type', 'application/pdf');
+        break;
+      default:
+        res.status(400).send({ message: 'Invalid file type' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Error generating file' });
+  }
+}
+

@@ -10,7 +10,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const csv = require('csvtojson');
 const xlsx = require('xlsx');
 const csvWriter = require('csv-writer');
-// const pdfMake = require('pdf-make');
+const pdfMake = require('pdfmake');
 const path = require('path');
 
 // exports.getAll = base.getAll(Airport);
@@ -494,10 +494,10 @@ exports.downloadAirportFile = async (req, res) => {
     switch (fileType) {
       case 'excel':
         const workbook = xlsx.utils.book_new();
-        const airportsData = [['Name']];
+        const airportsData = [['Name', 'Code', 'CityName']];
 
         airports.forEach((airport) => {
-          airportsData.push([airport.name]);
+          airportsData.push([airport.name, airport.code, airport.cityName]);
         });
 
         const worksheet = xlsx.utils.aoa_to_sheet(airportsData);
@@ -510,47 +510,207 @@ exports.downloadAirportFile = async (req, res) => {
         break;
       case 'csv':
         // create a CSV file
-        const csvData = [];
-        airports.forEach((item) => {
-          csvData.push({
-            'Name': item.name
-          });
-        });
+        const csvData = airports.map(airport => ({
+          name: airport.name,
+          code: airport.code,
+          cityName: airport.cityName
+        }));
+        const filePath = path.join(__dirname, './airprot.csv')
         const csvWriterInstance = csvWriter.createObjectCsvWriter({
-          path: './airports.csv',
+          path: filePath,
           header: [
-            { id: 'name', title: 'Name' }
+            { id: 'name', title: 'Name' },
+            {id: 'code', title : 'Code'},
+            {id: 'cityName', title : 'Cityname'},
           ],
         });
         csvWriterInstance.writeRecords(csvData).then(() => {
           res.setHeader('Content-Disposition', `attachment; filename="airports.csv"`);
           res.setHeader('Content-Type', 'text/csv');
-          res.sendFile('./airports.csv');
+          res.sendFile(filePath, (err) => {
+            if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).send('Internal Server Error');
+            } else {
+              console.log('File sent successfully');
+            }
+          });
         });
         break;
       case 'pdf':
         // create a PDF file
-        const pdfDoc = new pdfMake.PdfDocument();
-        const pdfTable = {
-          table: {
-            body: [
-              [
-                { text: 'Name', fontSize: 12, bold: true },
-              ],
-            ],
+        const fonts = {
+          Roboto: {
+            normal: 'Helvetica',
+            bold: 'Helvetica-Bold',
+            italics: 'Helvetica-Oblique',
+            bolditalics: 'Helvetica-BoldOblique',
           },
         };
-        airports.forEach((item) => {
-          pdfTable.table.body.push([
-            { text: item.name, fontSize: 12 }
-          ]);
+    
+        const printer = new pdfMake(fonts);
+    
+        const docDefinition = {
+          content: [
+            { text: 'Airports Report', style: 'header' },
+            {
+              table: {
+                headerRows: 1,
+                widths: ['*', '*', '*'],
+                body: [
+                  ['Name', 'Code', 'CityName'],
+                  ...airports.map(airport => [airport.name, airport.code, airport.cityName])
+                ],
+              },
+            },
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+              margin: [0, 0, 0, 10],
+            },
+          },
+        };
+    
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
+        pdfDoc.pipe(res);
+        pdfDoc.end();
+    
+        res.setHeader('Content-Disposition', 'attachment; filename="airports.pdf"');
+        res.setHeader('Content-Type', 'application/pdf');
+        break;
+      default:
+        res.status(400).send({ message: 'Invalid file type' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: 'Error generating file' });
+  }
+}
+
+exports.downloadDestinationFile = async (req, res) => {
+  const fileType = req.body.fileType;
+
+  if (!fileType) {
+    return res.status(400).send({ message: 'File type is required' });
+  }
+
+  let destinations = [];
+  if (req.body.page && req.body.limit) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    destinations = await Destination.find({}).skip(skip).limit(limit).populate('airportId').populate('vehicles.categoryId').lean();
+  } else {
+    destinations = await Destination.find().populate('airportId').populate('vehicles.categoryId').lean();
+  }
+
+  console.log('Fetched Destinations:', JSON.stringify(destinations, null, 2)); 
+
+  try {
+    switch (fileType) {
+      case 'excel':
+        const workbook = xlsx.utils.book_new();
+        const destinationsData =  [['AirportName', 'DestinationName', 'VehicleCategory', 'Price']];
+
+        destinations.forEach((destination) => {
+          destination.vehicles.forEach((vehicle) => {
+            destinationsData.push([
+              destination.airportId ? destination.airportId.name : 'N/A',
+              destination.name || 'N/A',
+              vehicle.categoryId ? vehicle.categoryId.name : 'N/A',
+              vehicle.price || 'N/A'
+            ]);
+          });
+        })
+
+        const worksheet = xlsx.utils.aoa_to_sheet(destinationsData);
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'Destinations');
+
+        const buffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
+        res.setHeader('Content-Disposition', `attachment; filename="destinations.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.send(buffer);
+        break;
+      case 'csv':
+        // create a CSV file
+        const csvData = [];
+        destinations.forEach((destination) => {
+          destination.vehicles.forEach((vehicle) => {
+            csvData.push([
+              destination.airportId ? destination.airportId.name : 'N/A',
+              destination.name || 'N/A',
+              vehicle.categoryId ? vehicle.categoryId.name : 'N/A',
+              vehicle.price || 'N/A'
+            ]);
+          });
         });
-        pdfDoc.add(pdfTable);
-        const pdfStream = pdfDoc.pipe(res);
-        pdfStream.on('finish', () => {
-          res.setHeader('Content-Disposition', `attachment; filename="airports.pdf"`);
-          res.setHeader('Content-Type', 'application/pdf');
+        const filePath = path.join(__dirname, './destination.csv')
+        const csvWriterInstance = csvWriter.createObjectCsvWriter({
+            path: filePath,
+          header: [
+            { id: 'AirportName', title: 'AirportName' },
+            { id: 'Destination', title: 'Destination' },
+            { id: 'VehicleCategory', title: 'VehicleCategory' },
+            { id: 'Price', title: 'Price' },
+          ],
         });
+        csvWriterInstance.writeRecords(csvData).then(() => {
+          res.setHeader('Content-Disposition', `attachment; filename="destinations.csv"`);
+          res.setHeader('Content-Type', 'text/csv');
+          res.sendFile(filePath, (err) => {
+            if (err) {
+              console.error('Error sending file:', err);
+              res.status(500).send('Internal Server Error');
+            } else {
+              console.log('File sent successfully');
+            }
+          });
+        });
+        break;
+      case 'pdf':
+        // create a PDF file
+        const fonts = {
+          Roboto: {
+            normal: 'Helvetica',
+            bold: 'Helvetica-Bold',
+            italics: 'Helvetica-Oblique',
+            bolditalics: 'Helvetica-BoldOblique',
+          },
+        };
+    
+        const printer = new pdfMake(fonts);
+    
+        const docDefinition = {
+          content: [
+            { text: 'Destination Report', style: 'header' },
+            {
+              table: {
+                headerRows: 1,
+                widths: ['*', '*', '*'],
+                body: [
+                  ['AirportName', 'DestinationName', 'VehicleName'],
+                  ...destinations.map(destination => [destination.name, destination.code, destination.cityName])
+                ],
+              },
+            },
+          ],
+          styles: {
+            header: {
+              fontSize: 18,
+              bold: true,
+              margin: [0, 0, 0, 10],
+            },
+          },
+        };
+    
+        const pdfDoc = printer.createPdfKitDocument(docDefinition);
+        pdfDoc.pipe(res);
+        pdfDoc.end();
+    
+        res.setHeader('Content-Disposition', 'attachment; filename="destinations.pdf"');
+        res.setHeader('Content-Type', 'application/pdf');
         break;
       default:
         res.status(400).send({ message: 'Invalid file type' });

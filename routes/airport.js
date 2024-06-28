@@ -40,6 +40,7 @@ router.delete("/airport/:id", airportController.delete);
 router.post("/airport-bulk-upload", uploadAirportFile, airportController.handleAirportUpload);
 router.post("/destination-bulk-upload", uploadDestinationFile, airportController.handleDestinationUpload);
 router.get("/airport-download", airportController.downloadAirportFile);
+router.get("/destination-download", airportController.downloadDestinationFile);
 
 router.delete("/destination/:id", airportController.deleteDestination);
 

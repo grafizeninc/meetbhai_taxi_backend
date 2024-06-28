@@ -25,6 +25,8 @@ router.post("/state", stateAndCityController.addState);
 router.delete("/state/:id", stateAndCityController.deleteState);
 router.post("/state-bulk-upload", stateImage, stateAndCityController.handleStateUpload);
 router.post("/city-bulk-upload", cityImage, stateAndCityController.handleCityUpload);
+router.get("/state-download", stateAndCityController.downloadStateFile);
+
 
 router.post("/city/:id", stateAndCityController.updateCity);
 router.post("/city", stateAndCityController.addCity);
