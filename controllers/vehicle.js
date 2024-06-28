@@ -10,9 +10,9 @@ exports.getModelAll = async (req, res, next) => {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      let searchParams;
+      let searchParams = {};
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }}
       }
 
       const totalCount = await VehicleModel.countDocuments(searchParams);
@@ -27,7 +27,11 @@ exports.getModelAll = async (req, res, next) => {
       });
     }
 
-    const data = await VehicleModel.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+    }
+    const data = await VehicleModel.find(searchParams);
     res.status(200).json({
       status: 'success',
       data
@@ -66,7 +70,46 @@ exports.addModel = async (req, res, next) => {
 
 // Vehicle
 
-exports.getAll = base.getAll(Vehicle);
+// exports.getAll = base.getAll(Vehicle);
+exports.getAll = async (req, res, next) => {
+  try {
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams = {};
+      if (req.query.search) {
+        searchParams = {categoryName: {$regex: req.query.search, $options: 'i'}}
+      }
+
+      const totalCount = await Vehicle.countDocuments(searchParams);
+      const data = await Vehicle.find(searchParams).skip(skip).limit(limit);
+
+      return res.status(200).json({
+        status: 'success',
+        data,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = {categoryName: {$regex: req.query.search, $options: 'i'}}
+    }
+
+    const data = await Vehicle.find(searchParams);
+    res.status(200).json({
+      status: 'success',
+      data
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getOne = base.getOne(Vehicle);
 exports.update = base.updateOne(Vehicle);
 exports.delete = base.deleteOne(Vehicle);

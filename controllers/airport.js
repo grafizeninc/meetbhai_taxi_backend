@@ -183,11 +183,55 @@ exports.getAvailableAirportInDestination = async (req, res, next) => {
 
 exports.getAvailbleAirportsInDestination = async (req, res, next) => {
   try {
+
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams = {};
+      if (req.query.search) {
+        searchParams = {
+          $or: [
+            { name: { $regex: req.query.search, $options: 'i' } },
+            { code: { $regex: req.query.search, $options: 'i' } },
+          ],
+        };
+      }
+
+      const destinations = await AvailableAirportInDestination.find();
+
+      const ids = destinations.map(item => item.airportId);
+
+      const totalCount = await Airport.countDocuments({ _id: { $in: ids },...searchParams });
+      const airports = await Airport.find({ _id: { $in: ids },...searchParams })
+          .skip(skip)
+          .limit(limit);
+
+      return res.status(200).json({
+        status: "success",
+        airports,
+        page,
+        totalCount,
+        totalPages: Math.ceil(totalCount / limit),
+      });
+    }
+
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = {
+        $or: [
+          { name: { $regex: req.query.search, $options: 'i' } },
+          { code: { $regex: req.query.search, $options: 'i' } },
+        ],
+      };
+    }
+
     const destinations = await AvailableAirportInDestination.find();
 
     const ids = destinations.map(item => item.airportId);
 
-    const airports = await Airport.find({ _id: { $in: ids } });
+    const airports = await Airport.find({ _id: { $in: ids }, ...searchParams });
 
     res.status(200).json({
       status: "success",
@@ -208,9 +252,9 @@ exports.getAllDestination = async (req, res, next) => {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      let searchParams;
+      let searchParams = {};
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }}
       }
 
       const totalCount = await Destination.countDocuments(searchParams);
@@ -225,7 +269,12 @@ exports.getAllDestination = async (req, res, next) => {
       });
     }
 
-    const data = await Destination.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+    }
+
+    const data = await Destination.find(searchParams);
     res.status(200).json({
       status: 'success',
       data

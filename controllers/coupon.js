@@ -31,11 +31,17 @@ exports.getAll = async (req, res, next) => {
         status: 'success',
         data,
         page,
+        totalCount: totalCount,
         totalPages: Math.ceil(totalCount / limit)
       });
     }
 
-    const data = await Coupon.find(filter);
+    let searchParams = {...filter};
+    if (req.query.search) {
+      searchParams = {name: { $regex: req.query.search, $options: 'i' }}
+    }
+
+    const data = await Coupon.find(searchParams);
     res.status(200).json({
       status: 'success',
       data

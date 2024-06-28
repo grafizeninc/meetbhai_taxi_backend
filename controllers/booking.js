@@ -16,11 +16,43 @@ const base = require("./base");
 
 exports.getBookingList = async (req, res, next) => {
   try {
+
+    if (req.query.page && req.query.limit) {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
+
+      let searchParams = {};
+      if (req.query.search) {
+        const searchQuery = req.query.search;
+        searchParams = {
+          $or: [
+            { 'userId.name': { $regex: searchQuery, $options: 'i' } },
+            // { 'airportBookingId.name': { $regex: searchQuery, $options: 'i' } },
+            // { 'hourlyRentalBookingId.packageName': { $regex: searchQuery, $options: 'i' } },
+            // { 'localAirportBookingId.packageName': { $regex: searchQuery, $options: 'i' } },
+            // { 'outStationBookingId.outStationName': { $regex: searchQuery, $options: 'i' } },
+          ],
+        };
+      }
+
+      const totalCount = await Booking.countDocuments(searchParams);
+      const bookings = await Booking.find(searchParams).skip(skip).limit(limit).populate("userId airportBookingId hourlyRentalBookingId localAirportBookingId outStationBookingId").sort({createdAt: -1});
+
+      return res.status(200).json({
+        status: 'success',
+        bookings,
+        page,
+        totalCount: totalCount,
+        totalPages: Math.ceil(totalCount / limit)
+      });
+    }
+
     const bookings = await Booking.find({}).populate("userId airportBookingId hourlyRentalBookingId localAirportBookingId outStationBookingId").sort({createdAt: -1});
 
     res.status(200).json({
       status: "success",
-      data: { bookings },
+      data: bookings ,
     });
   } catch (err) {
     next(err);

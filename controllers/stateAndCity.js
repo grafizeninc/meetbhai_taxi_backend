@@ -14,9 +14,9 @@ exports.getAllState = async (req, res, next) => {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      let searchParams;
+      let searchParams = {};
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }}
       }
 
       const totalCount = await State.countDocuments(searchParams);
@@ -31,7 +31,12 @@ exports.getAllState = async (req, res, next) => {
       });
     }
 
-    const data = await State.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+    }
+
+    const data = await State.find(searchParams);
     res.status(200).json({
       status: 'success',
       data
@@ -71,9 +76,9 @@ exports.getAllCity = async (req, res, next) => {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      let searchParams;
+      let searchParams = {};
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = { name: { $regex: req.query.search, $options: 'i' }}
       }
 
       const totalCount = await City.countDocuments(searchParams);
@@ -88,7 +93,12 @@ exports.getAllCity = async (req, res, next) => {
       });
     }
 
-    const data = await City.find({});
+    let searchParams = {};
+    if (req.query.search) {
+      searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+    }
+
+    const data = await City.find(searchParams);
     res.status(200).json({
       status: 'success',
       data

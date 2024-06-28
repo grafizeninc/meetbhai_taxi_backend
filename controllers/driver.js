@@ -6,15 +6,15 @@ const fs = require("fs")
 // exports.getAll = base.getAll(driverModel);
 exports.getAll = async (req, res, next) => {
     try {
+        let searchParams = {};
+        if (req.query.search) {
+            searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+        }
+
         if (req.query.page && req.query.limit) {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const skip = (page - 1) * limit;
-
-            let searchParams;
-            if (req.query.search) {
-                searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
-            }
 
             const totalCount = await driverModel.countDocuments(searchParams);
             const data = await driverModel.find(searchParams).skip(skip).limit(limit);
@@ -28,7 +28,7 @@ exports.getAll = async (req, res, next) => {
             });
         }
 
-        const data = await driverModel.find({});
+        const data = await driverModel.find(searchParams);
         res.status(200).json({
             status: 'success',
             data
