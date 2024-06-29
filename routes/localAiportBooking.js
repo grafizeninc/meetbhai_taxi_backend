@@ -15,5 +15,6 @@ router.delete("/local-airport-booking/:id", bookingController.deleteBooking);
 router.get("/local-airport-bookings", bookingController.getBookingList);
 router.post("/local-airport-booking/cancel/:id", bookingController.cancelBooking);
 router.post("/local-airport-booking/assign/:id", bookingController.assignDriver);
+router.post("/local-airport-booking/accept/:id", bookingController.acceptBooking);
 
 module.exports = router;

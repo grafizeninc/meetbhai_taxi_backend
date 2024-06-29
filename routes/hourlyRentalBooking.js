@@ -15,5 +15,6 @@ router.delete("/hourly-rental-booking/:id", bookingController.deleteBooking);
 router.get("/hourly-rental-bookings", bookingController.getBookingList);
 router.post("/hourly-rental-booking/cancel/:id", bookingController.cancelBooking);
 router.post("/hourly-rental-booking/assign/:id", bookingController.assignDriver);
+router.post("/hourly-rental-booking/accept/:id", bookingController.acceptBooking);
 
 module.exports = router;

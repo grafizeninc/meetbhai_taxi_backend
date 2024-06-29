@@ -3,7 +3,7 @@ const path = require('path');
 
 exports.storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        if (file.fieldname === 'airport' || 'state' || 'city' || 'destination' || 'vehicle') {
+        if (file.fieldname === 'airport' || 'state' || 'city' || 'destination' || 'vehicle' || 'trips') {
             cb(null, './uploads/img/bulkUpload');
         }
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/gif') {
