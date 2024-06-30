@@ -5,13 +5,16 @@ const Destination = require("../models/destination");
 const VehicleModel = require("../models/vehicleModel");
 const AppError = require("../utils/appError");
 const Vehicle = require("../models/vehicle");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const ObjectId = mongoose.Types.ObjectId;
-const csv = require('csvtojson');
-const xlsx = require('xlsx');
-const csvWriter = require('csv-writer');
-const pdfMake = require('pdfmake');
-const path = require('path');
+const csv = require("csvtojson");
+const csvWriter = require("csv-writer");
+const pdfMake = require("pdfmake");
+const path = require("path");
+const fs = require("fs");
+const fastcsv = require("fast-csv");
+const xlsx = require("xlsx");
+const PDFDocument = require("pdfkit");
 
 // exports.getAll = base.getAll(Airport);
 exports.getOne = base.getOne(Airport);
@@ -27,29 +30,35 @@ exports.getAll = async (req, res, next) => {
 
       let searchParams;
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+        searchParams = {
+          name: { $regex: req.query.search, $options: "i" },
+          code: { $regex: req.query.search, $options: "i" },
+        };
       }
 
       const totalCount = await Airport.countDocuments(searchParams);
       const data = await Airport.find(searchParams).skip(skip).limit(limit);
 
       return res.status(200).json({
-        status: 'success',
+        status: "success",
         data,
         page,
         totalCount: totalCount,
-        totalPages: Math.ceil(totalCount / limit)
+        totalPages: Math.ceil(totalCount / limit),
       });
     }
 
     let searchParams = {};
     if (req.query.search) {
-      searchParams = { name: { $regex: req.query.search, $options: 'i' }, code: { $regex: req.query.search, $options: 'i'}}
+      searchParams = {
+        name: { $regex: req.query.search, $options: "i" },
+        code: { $regex: req.query.search, $options: "i" },
+      };
     }
     const data = await Airport.find(searchParams);
     res.status(200).json({
-      status: 'success',
-      data
+      status: "success",
+      data,
     });
   } catch (err) {
     next(err);
@@ -90,7 +99,10 @@ exports.addAvailableAirportInDestination = async (req, res, next) => {
       );
     }
 
-    const checkDestinationAirportExist = await AvailableAirportInDestination.find({ airportId: req.body.airport }).lean();
+    const checkDestinationAirportExist =
+      await AvailableAirportInDestination.find({
+        airportId: req.body.airport,
+      }).lean();
     if (!checkDestinationAirportExist) {
       return next(
         new AppError(401, "fail", "Airport already exist"),
@@ -122,7 +134,7 @@ exports.addAvailableAirportInDestination = async (req, res, next) => {
 exports.updateDestinationTags = async (req, res, next) => {
   try {
     let tags = req.body.tags;
-    let tagsData = tags ? tags.split(",").map(tag => tag.trim()) : [];
+    let tagsData = tags ? tags.split(",").map((tag) => tag.trim()) : [];
     const doc = await Destination.findByIdAndUpdate(
       req.params.id,
       {
@@ -154,17 +166,16 @@ exports.updateDestinationTags = async (req, res, next) => {
   }
 };
 
-
-
 exports.getAvailableAirportInDestination = async (req, res, next) => {
   try {
     const airports = await Airport.find();
 
     const airportDestinationCount = await Promise.all(
       airports.map(async (airport) => {
-        const destinationCount = await AvailableAirportInDestination.countDocuments({
-          airportId: airport._id,
-        });
+        const destinationCount =
+          await AvailableAirportInDestination.countDocuments({
+            airportId: airport._id,
+          });
         return {
           airportId: airport._id,
           airportName: airport.name,
@@ -183,7 +194,6 @@ exports.getAvailableAirportInDestination = async (req, res, next) => {
 
 exports.getAvailbleAirportsInDestination = async (req, res, next) => {
   try {
-
     if (req.query.page && req.query.limit) {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
@@ -193,20 +203,26 @@ exports.getAvailbleAirportsInDestination = async (req, res, next) => {
       if (req.query.search) {
         searchParams = {
           $or: [
-            { name: { $regex: req.query.search, $options: 'i' } },
-            { code: { $regex: req.query.search, $options: 'i' } },
+            { name: { $regex: req.query.search, $options: "i" } },
+            { code: { $regex: req.query.search, $options: "i" } },
           ],
         };
       }
 
       const destinations = await AvailableAirportInDestination.find();
 
-      const ids = destinations.map(item => item.airportId);
+      const ids = destinations.map((item) => item.airportId);
 
-      const totalCount = await Airport.countDocuments({ _id: { $in: ids },...searchParams });
-      const airports = await Airport.find({ _id: { $in: ids },...searchParams })
-          .skip(skip)
-          .limit(limit);
+      const totalCount = await Airport.countDocuments({
+        _id: { $in: ids },
+        ...searchParams,
+      });
+      const airports = await Airport.find({
+        _id: { $in: ids },
+        ...searchParams,
+      })
+        .skip(skip)
+        .limit(limit);
 
       return res.status(200).json({
         status: "success",
@@ -221,15 +237,15 @@ exports.getAvailbleAirportsInDestination = async (req, res, next) => {
     if (req.query.search) {
       searchParams = {
         $or: [
-          { name: { $regex: req.query.search, $options: 'i' } },
-          { code: { $regex: req.query.search, $options: 'i' } },
+          { name: { $regex: req.query.search, $options: "i" } },
+          { code: { $regex: req.query.search, $options: "i" } },
         ],
       };
     }
 
     const destinations = await AvailableAirportInDestination.find();
 
-    const ids = destinations.map(item => item.airportId);
+    const ids = destinations.map((item) => item.airportId);
 
     const airports = await Airport.find({ _id: { $in: ids }, ...searchParams });
 
@@ -254,30 +270,30 @@ exports.getAllDestination = async (req, res, next) => {
 
       let searchParams = {};
       if (req.query.search) {
-        searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+        searchParams = { name: { $regex: req.query.search, $options: "i" } };
       }
 
       const totalCount = await Destination.countDocuments(searchParams);
       const data = await Destination.find(searchParams).skip(skip).limit(limit);
 
       return res.status(200).json({
-        status: 'success',
+        status: "success",
         data,
         page,
         totalCount: totalCount,
-        totalPages: Math.ceil(totalCount / limit)
+        totalPages: Math.ceil(totalCount / limit),
       });
     }
 
     let searchParams = {};
     if (req.query.search) {
-      searchParams = { name: { $regex: req.query.search, $options: 'i' }}
+      searchParams = { name: { $regex: req.query.search, $options: "i" } };
     }
 
     const data = await Destination.find(searchParams);
     res.status(200).json({
-      status: 'success',
-      data
+      status: "success",
+      data,
     });
   } catch (err) {
     next(err);
@@ -288,7 +304,9 @@ exports.updateDestination = base.updateOne(Destination);
 exports.deleteDestination = base.deleteOne(Destination);
 exports.getDestinationByAirport = async (req, res, next) => {
   try {
-    const destinationList = await Destination.find({ airportId: req.params.airport }).populate('vehicles.categoryId');;
+    const destinationList = await Destination.find({
+      airportId: req.params.airport,
+    }).populate("vehicles.categoryId");
 
     res.status(200).json({
       status: "success",
@@ -360,14 +378,16 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
       _id: req.query.destinationId,
     }).lean();
     if (!destination || !Array.isArray(destination.vehicles)) {
-      return res.status(400).json({ status: "Fail", message: "Destination not found... " })
+      return res
+        .status(400)
+        .json({ status: "Fail", message: "Destination not found..." });
     }
 
     for (const h of destination.vehicles) {
       h.categoryId = await Vehicle.findById(ObjectId(h.categoryId));
     }
 
-    const data = destination?.vehicles.map(item => ({
+    const data = destination?.vehicles.map((item) => ({
       categoryId: item.categoryId._id,
       categoryName: item.categoryId.categoryName,
       price: item.price,
@@ -376,7 +396,7 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
       fuelType: item.fuelType,
       ac: item.ac,
       carrier: item.carrier,
-    }))
+    }));
 
     res.status(200).json({
       status: "success",
@@ -387,25 +407,23 @@ exports.getvehicleListByAirportDestination = async (req, res, next) => {
   }
 };
 
-
-
 const processCSV = async (filePath) => {
   const jsonArray = await csv().fromFile(filePath);
   const currentDate = new Date();
-  jsonArray.forEach(item => {
+  jsonArray.forEach((item) => {
     item.addedDate = currentDate;
-    item.fileType = 'csv';
+    item.fileType = "csv";
   });
   return jsonArray;
-}
+};
 const processExcel = (filePath) => {
   const workbook = xlsx.readFile(filePath);
   const sheetName = workbook.SheetNames[0];
   const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
   const currentDate = new Date();
-  worksheet.forEach(item => {
+  worksheet.forEach((item) => {
     item.addedDate = currentDate;
-    item.fileType = 'excel';
+    item.fileType = "excel";
   });
   return worksheet;
 };
@@ -415,12 +433,12 @@ exports.handleAirportUpload = async (req, res) => {
     const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     let jsonArray;
-    if (ext === '.csv') {
+    if (ext === ".csv") {
       jsonArray = await processCSV(filePath);
-    } else if (ext === '.xlsx' || ext === '.xls') {
+    } else if (ext === ".xlsx" || ext === ".xls") {
       jsonArray = processExcel(filePath);
     } else {
-      return res.status(400).json({ error: 'Unsupported file format' });
+      return res.status(400).json({ error: "Unsupported file format" });
     }
     const savedFiles = await Airport.insertMany(jsonArray);
     res.json({ files: savedFiles });
@@ -429,42 +447,48 @@ exports.handleAirportUpload = async (req, res) => {
   }
 };
 
-
 const processDestinationCSV = async (filePath, id) => {
   const jsonArray = await csv().fromFile(filePath);
   const currentDate = new Date();
-  jsonArray.forEach(item => {
+  jsonArray.forEach((item) => {
     item.addedDate = currentDate;
     item.availableAirportInDestinationId = id;
-    item.fileType = 'csv'; 
+    item.fileType = "csv";
   });
   return jsonArray;
-}
+};
 const processDestinationExcel = async (filePath, id) => {
   const workbook = xlsx.readFile(filePath);
   const sheetName = workbook.SheetNames[0];
   const worksheet = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
   const currentDate = new Date();
-  worksheet.forEach(item => {
+  worksheet.forEach((item) => {
     item.addedDate = currentDate;
     item.availableAirportInDestinationId = id;
-    item.fileType = 'excel';
+    item.fileType = "excel";
   });
   return worksheet;
 };
 
 exports.handleDestinationUpload = async (req, res) => {
   try {
-    const availableAirportInDestinationId = req.body.availableAirportInDestinationId;
+    const availableAirportInDestinationId =
+      req.body.availableAirportInDestinationId;
     const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     let jsonArray;
-    if (ext === '.csv') {
-      jsonArray = await processDestinationCSV(filePath, availableAirportInDestinationId);
-    } else if (ext === '.xlsx' || ext === '.xls') {
-      jsonArray = processDestinationExcel(filePath, availableAirportInDestinationId);
+    if (ext === ".csv") {
+      jsonArray = await processDestinationCSV(
+        filePath,
+        availableAirportInDestinationId
+      );
+    } else if (ext === ".xlsx" || ext === ".xls") {
+      jsonArray = processDestinationExcel(
+        filePath,
+        availableAirportInDestinationId
+      );
     } else {
-      return res.status(400).json({ error: 'Unsupported file format' });
+      return res.status(400).json({ error: "Unsupported file format" });
     }
     const savedFiles = await Destination.insertMany(jsonArray);
     res.json({ files: savedFiles });
@@ -474,10 +498,11 @@ exports.handleDestinationUpload = async (req, res) => {
 };
 
 exports.downloadAirportFile = async (req, res) => {
-  const fileType = req.body.fileType;
+  console.log(req.body);
+  const fileType = "excel" || req.body.fileType;
 
   if (!fileType) {
-    return res.status(400).send({ message: 'File type is required' });
+    return res.status(400).send({ message: "File type is required" });
   }
 
   let airports = [];
@@ -492,74 +517,91 @@ exports.downloadAirportFile = async (req, res) => {
 
   try {
     switch (fileType) {
-      case 'excel':
+      case "excel":
         const workbook = xlsx.utils.book_new();
-        const airportsData = [['Name', 'Code', 'CityName']];
+        const airportsData = [["Name", "Code", "CityName"]];
 
         airports.forEach((airport) => {
           airportsData.push([airport.name, airport.code, airport.cityName]);
         });
 
         const worksheet = xlsx.utils.aoa_to_sheet(airportsData);
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'Airports');
+        xlsx.utils.book_append_sheet(workbook, worksheet, "Airports");
 
-        const buffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
-        res.setHeader('Content-Disposition', `attachment; filename="airports.xlsx"`);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        const buffer = xlsx.write(workbook, {
+          bookType: "xlsx",
+          type: "buffer",
+        });
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="airports.xlsx"`
+        );
+        res.setHeader(
+          "Content-Type",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
         res.send(buffer);
+
         break;
-      case 'csv':
+      case "csv":
         // create a CSV file
-        const csvData = airports.map(airport => ({
+        const csvData = airports.map((airport) => ({
           name: airport.name,
           code: airport.code,
-          cityName: airport.cityName
+          cityName: airport.cityName,
         }));
-        const filePath = path.join(__dirname, './airprot.csv')
+        const filePath = path.join(__dirname, "./airprot.csv");
         const csvWriterInstance = csvWriter.createObjectCsvWriter({
           path: filePath,
           header: [
-            { id: 'name', title: 'Name' },
-            {id: 'code', title : 'Code'},
-            {id: 'cityName', title : 'Cityname'},
+            { id: "name", title: "Name" },
+            { id: "code", title: "Code" },
+            { id: "cityName", title: "Cityname" },
           ],
         });
         csvWriterInstance.writeRecords(csvData).then(() => {
-          res.setHeader('Content-Disposition', `attachment; filename="airports.csv"`);
-          res.setHeader('Content-Type', 'text/csv');
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="airports.csv"`
+          );
+          res.setHeader("Content-Type", "text/csv");
           res.sendFile(filePath, (err) => {
             if (err) {
-              console.error('Error sending file:', err);
-              res.status(500).send('Internal Server Error');
+              console.error("Error sending file:", err);
+              res.status(500).send("Internal Server Error");
             } else {
-              console.log('File sent successfully');
+              console.log("File sent successfully");
             }
           });
         });
         break;
-      case 'pdf':
+      case "pdf":
         // create a PDF file
         const fonts = {
           Roboto: {
-            normal: 'Helvetica',
-            bold: 'Helvetica-Bold',
-            italics: 'Helvetica-Oblique',
-            bolditalics: 'Helvetica-BoldOblique',
+            normal: "Helvetica",
+            bold: "Helvetica-Bold",
+            italics: "Helvetica-Oblique",
+            bolditalics: "Helvetica-BoldOblique",
           },
         };
-    
+
         const printer = new pdfMake(fonts);
-    
+
         const docDefinition = {
           content: [
-            { text: 'Airports Report', style: 'header' },
+            { text: "Airports Report", style: "header" },
             {
               table: {
                 headerRows: 1,
-                widths: ['*', '*', '*'],
+                widths: ["*", "*", "*"],
                 body: [
-                  ['Name', 'Code', 'CityName'],
-                  ...airports.map(airport => [airport.name, airport.code, airport.cityName])
+                  ["Name", "Code", "CityName"],
+                  ...airports.map((airport) => [
+                    airport.name,
+                    airport.code,
+                    airport.cityName,
+                  ]),
                 ],
               },
             },
@@ -572,28 +614,107 @@ exports.downloadAirportFile = async (req, res) => {
             },
           },
         };
-    
+
         const pdfDoc = printer.createPdfKitDocument(docDefinition);
         pdfDoc.pipe(res);
         pdfDoc.end();
-    
-        res.setHeader('Content-Disposition', 'attachment; filename="airports.pdf"');
-        res.setHeader('Content-Type', 'application/pdf');
+
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="airports.pdf"'
+        );
+        res.setHeader("Content-Type", "application/pdf");
         break;
       default:
-        res.status(400).send({ message: 'Invalid file type' });
+        res.status(400).send({ message: "Invalid file type" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error generating file' });
+    res.status(500).send({ message: "Error generating file" });
   }
-}
+};
+
+exports.downloadAirportFileNew = async (req, res) => {
+  console.log(req.body);
+  const fileType = req.params.document;
+
+  if (!fileType) {
+    return res.status(400).send({ message: "File type is required" });
+  }
+
+  let airports = [];
+  if (req.body.page && req.body.limit) {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    airports = await Airport.find({}).skip(skip).limit(limit);
+  } else {
+    airports = await Airport.find().lean();
+  }
+
+  try {
+    switch (fileType) {
+      case "excel":
+        const wb = xlsx.utils.book_new();
+        let ws = xlsx.utils.json_to_sheet(airports);
+        xlsx.utils.book_append_sheet(wb, ws, "Sheet1");
+        xlsx.writeFile(wb, "output.xlsx");
+
+        res.download("output.xlsx", "data.xlsx", (err) => {
+          if (err) throw err;
+          fs.unlinkSync("output.xlsx");
+        });
+        break;
+      case "csv":
+        let wsa = fs.createWriteStream("output.csv");
+        fastcsv.write(airports, { headers: true }).pipe(wsa);
+
+        wsa.on("finish", () => {
+          res.download("output.csv", "data.csv", (err) => {
+            if (err) throw err;
+            fs.unlinkSync("output.csv");
+          });
+        });
+        break;
+      case "pdf":
+        const doc = new PDFDocument();
+        const outputFilePath = "output.pdf";
+        const writeStream = fs.createWriteStream(outputFilePath);
+
+        doc.pipe(writeStream);
+
+        airports.forEach((item) => {
+          doc.text(JSON.stringify(item, null, 2));
+          doc.moveDown();
+        });
+
+        doc.end();
+
+        writeStream.on("finish", () => {
+          res.download(outputFilePath, "data.pdf", (err) => {
+            if (err) {
+              console.error("Error during download:", err);
+              res.status(500).send("Error downloading the PDF");
+            } else {
+              fs.unlinkSync(outputFilePath); // Delete the file after download
+            }
+          });
+        });
+        break;
+      default:
+        res.status(400).send({ message: "Invalid file type" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Error generating file" });
+  }
+};
 
 exports.downloadDestinationFile = async (req, res) => {
   const fileType = req.body.fileType;
 
   if (!fileType) {
-    return res.status(400).send({ message: 'File type is required' });
+    return res.status(400).send({ message: "File type is required" });
   }
 
   let destinations = [];
@@ -601,97 +722,123 @@ exports.downloadDestinationFile = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    destinations = await Destination.find({}).skip(skip).limit(limit).populate('airportId').populate('vehicles.categoryId').lean();
+    destinations = await Destination.find({})
+      .skip(skip)
+      .limit(limit)
+      .populate("airportId")
+      .populate("vehicles.categoryId")
+      .lean();
   } else {
-    destinations = await Destination.find().populate('airportId').populate('vehicles.categoryId').lean();
+    destinations = await Destination.find()
+      .populate("airportId")
+      .populate("vehicles.categoryId")
+      .lean();
   }
 
-  console.log('Fetched Destinations:', JSON.stringify(destinations, null, 2)); 
+  console.log("Fetched Destinations:", JSON.stringify(destinations, null, 2));
 
   try {
     switch (fileType) {
-      case 'excel':
+      case "excel":
         const workbook = xlsx.utils.book_new();
-        const destinationsData =  [['AirportName', 'DestinationName', 'VehicleCategory', 'Price']];
+        const destinationsData = [
+          ["AirportName", "DestinationName", "VehicleCategory", "Price"],
+        ];
 
         destinations.forEach((destination) => {
           destination.vehicles.forEach((vehicle) => {
             destinationsData.push([
-              destination.airportId ? destination.airportId.name : 'N/A',
-              destination.name || 'N/A',
-              vehicle.categoryId ? vehicle.categoryId.name : 'N/A',
-              vehicle.price || 'N/A'
+              destination.airportId ? destination.airportId.name : "N/A",
+              destination.name || "N/A",
+              vehicle.categoryId ? vehicle.categoryId.name : "N/A",
+              vehicle.price || "N/A",
             ]);
           });
-        })
+        });
 
         const worksheet = xlsx.utils.aoa_to_sheet(destinationsData);
-        xlsx.utils.book_append_sheet(workbook, worksheet, 'Destinations');
+        xlsx.utils.book_append_sheet(workbook, worksheet, "Destinations");
 
-        const buffer = xlsx.write(workbook, { bookType: 'xlsx', type: 'buffer' });
-        res.setHeader('Content-Disposition', `attachment; filename="destinations.xlsx"`);
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        const buffer = xlsx.write(workbook, {
+          bookType: "xlsx",
+          type: "buffer",
+        });
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename="destinations.xlsx"`
+        );
+        res.setHeader(
+          "Content-Type",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
         res.send(buffer);
         break;
-      case 'csv':
+      case "csv":
         // create a CSV file
         const csvData = [];
         destinations.forEach((destination) => {
           destination.vehicles.forEach((vehicle) => {
             csvData.push([
-              destination.airportId ? destination.airportId.name : 'N/A',
-              destination.name || 'N/A',
-              vehicle.categoryId ? vehicle.categoryId.name : 'N/A',
-              vehicle.price || 'N/A'
+              destination.airportId ? destination.airportId.name : "N/A",
+              destination.name || "N/A",
+              vehicle.categoryId ? vehicle.categoryId.name : "N/A",
+              vehicle.price || "N/A",
             ]);
           });
         });
-        const filePath = path.join(__dirname, './destination.csv')
+        const filePath = path.join(__dirname, "./destination.csv");
         const csvWriterInstance = csvWriter.createObjectCsvWriter({
-            path: filePath,
+          path: filePath,
           header: [
-            { id: 'AirportName', title: 'AirportName' },
-            { id: 'Destination', title: 'Destination' },
-            { id: 'VehicleCategory', title: 'VehicleCategory' },
-            { id: 'Price', title: 'Price' },
+            { id: "AirportName", title: "AirportName" },
+            { id: "Destination", title: "Destination" },
+            { id: "VehicleCategory", title: "VehicleCategory" },
+            { id: "Price", title: "Price" },
           ],
         });
         csvWriterInstance.writeRecords(csvData).then(() => {
-          res.setHeader('Content-Disposition', `attachment; filename="destinations.csv"`);
-          res.setHeader('Content-Type', 'text/csv');
+          res.setHeader(
+            "Content-Disposition",
+            `attachment; filename="destinations.csv"`
+          );
+          res.setHeader("Content-Type", "text/csv");
           res.sendFile(filePath, (err) => {
             if (err) {
-              console.error('Error sending file:', err);
-              res.status(500).send('Internal Server Error');
+              console.error("Error sending file:", err);
+              res.status(500).send("Internal Server Error");
             } else {
-              console.log('File sent successfully');
+              console.log("File sent successfully");
             }
           });
         });
         break;
-      case 'pdf':
+      case "pdf":
         // create a PDF file
         const fonts = {
           Roboto: {
-            normal: 'Helvetica',
-            bold: 'Helvetica-Bold',
-            italics: 'Helvetica-Oblique',
-            bolditalics: 'Helvetica-BoldOblique',
+            normal: "Helvetica",
+            bold: "Helvetica-Bold",
+            italics: "Helvetica-Oblique",
+            bolditalics: "Helvetica-BoldOblique",
           },
         };
-    
+
         const printer = new pdfMake(fonts);
-    
+
         const docDefinition = {
           content: [
-            { text: 'Destination Report', style: 'header' },
+            { text: "Destination Report", style: "header" },
             {
               table: {
                 headerRows: 1,
-                widths: ['*', '*', '*'],
+                widths: ["*", "*", "*"],
                 body: [
-                  ['AirportName', 'DestinationName', 'VehicleName'],
-                  ...destinations.map(destination => [destination.name, destination.code, destination.cityName])
+                  ["AirportName", "DestinationName", "VehicleName"],
+                  ...destinations.map((destination) => [
+                    destination.name,
+                    destination.code,
+                    destination.cityName,
+                  ]),
                 ],
               },
             },
@@ -704,19 +851,22 @@ exports.downloadDestinationFile = async (req, res) => {
             },
           },
         };
-    
+
         const pdfDoc = printer.createPdfKitDocument(docDefinition);
         pdfDoc.pipe(res);
         pdfDoc.end();
-    
-        res.setHeader('Content-Disposition', 'attachment; filename="destinations.pdf"');
-        res.setHeader('Content-Type', 'application/pdf');
+
+        res.setHeader(
+          "Content-Disposition",
+          'attachment; filename="destinations.pdf"'
+        );
+        res.setHeader("Content-Type", "application/pdf");
         break;
       default:
-        res.status(400).send({ message: 'Invalid file type' });
+        res.status(400).send({ message: "Invalid file type" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send({ message: 'Error generating file' });
+    res.status(500).send({ message: "Error generating file" });
   }
-}
+};
