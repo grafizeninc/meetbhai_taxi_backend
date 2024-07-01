@@ -20,7 +20,7 @@ exports.createBooking = async (req, res, next) => {
 
 exports.getBookingList = async (req, res, next) => {
   try {
-    const bookings = await Booking.find({}).populate("user");
+    const bookings = await Booking.find({}).populate("user cityId packageId categoryId");
     res.status(200).json({
       status: "success",
       data: { bookings },

@@ -48,7 +48,36 @@ exports.getBookingList = async (req, res, next) => {
       });
     }
 
-    const bookings = await Booking.find({}).populate("userId airportBookingId hourlyRentalBookingId localAirportBookingId outStationBookingId").sort({createdAt: -1});
+    const bookings = await Booking.find({}).populate([
+      { path: 'userId' },
+      {
+        path: 'airportBookingId',
+        populate: [
+          { path: 'airportId', model: 'Airport' },
+          { path: 'destinationId', model: 'Destination' },
+          { path: 'categoryId', model: 'Vehicle' },
+        ],
+      },
+      { path: 'hourlyRentalBookingId',
+        populate: [
+          { path: 'cityId', model: 'City'},
+          { path: 'packageId', model: 'HourlyRental'},
+          { path: 'categoryId', model: 'Vehicle'}
+        ]
+      },
+      { path: 'localAirportBookingId',
+        populate: [
+          { path: 'cityId', model: 'City'},
+          { path: 'packageId', model: 'LocalPackages'},
+          { path: 'categoryId', model: 'Vehicle'}
+        ]
+      },
+      { path: 'outStationBookingId',
+        populate: [
+          { path: 'stateId', model: 'State'}
+        ]
+      },
+    ]).sort({createdAt: -1});
 
     res.status(200).json({
       status: "success",
